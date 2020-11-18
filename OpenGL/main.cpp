@@ -2,6 +2,9 @@
 #include <gl\GL.h>
 #include "glut.h"		//"glut.h" if local
 #include <stdlib.h>		// Library used for random method
+#include "Plane.h"
+
+Plane *plane;
 
 
 void customInitialize(void)
@@ -43,10 +46,13 @@ void customInitialize(void)
 	// Enable depth testing (for hidden surface removal)
 	glEnable(GL_DEPTH_TEST);
 
+	plane = new Plane();
 }
 
 void DrawAxis(void)
 {
+	// Disable lighting
+	glDisable(GL_LIGHTING);
 	// Drawing Axis
 	glLineWidth(2.0);
 	
@@ -71,6 +77,7 @@ void DrawAxis(void)
 	glVertex3f(0.0, 0.0, 1.5);
 	glEnd();
 	
+	glEnable(GL_LIGHTING);
 }
 
 void display(void)
@@ -78,13 +85,12 @@ void display(void)
 	// Clear the buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Rotate the camera
-	glRotated(0.01, 0.0, 1.0, 0.0);
-
-	// Disable lighting
-	glDisable(GL_LIGHTING);
+	glLoadIdentity();
+	gluLookAt(plane->pos[0] + 5, plane->pos[1] + 0.3, plane->pos[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
 
 	DrawAxis();
+
+	plane->Fly();
 
 	glutSwapBuffers();
 }
@@ -108,7 +114,7 @@ void reshape(int w, int h)
 
 	// Set the "look at" point - where the "camera" is and
 	// where it is "pointed"
-	gluLookAt(5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	// gluLookAt(5.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -118,7 +124,31 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		exit(0);
 		break;
+	case'r':
+		plane->Reset();
+		break;
+	case'm':
+		plane->move = !plane->move;
+		break;
 	}
+}
+
+void processSpecialKeys(int key, int x, int y) {
+	switch (key) {
+	case GLUT_KEY_UP:
+		plane->accUser[1] += 1000;
+		break;
+	case GLUT_KEY_DOWN:
+		plane->accUser[1] -= 1000;
+		break;
+	case GLUT_KEY_LEFT:
+		plane->accUser[2] += 1000;
+		break;
+	case GLUT_KEY_RIGHT:
+		plane->accUser[2] -= 1000;
+		break;
+	}
+	glutPostRedisplay();
 }
 
 // Alternate version for iOS / Linux
@@ -140,6 +170,7 @@ int main(int argc, char** argv)
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
 	glutIdleFunc(display);
+	glutSpecialFunc(processSpecialKeys);
 
 	// Do main loop
 	glutMainLoop();
