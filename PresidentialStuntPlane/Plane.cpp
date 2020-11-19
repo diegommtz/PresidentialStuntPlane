@@ -1,16 +1,12 @@
 #include "Plane.h"
 
 Plane::Plane() {
-	posFixed[0] = 0.0;
-	posFixed[1] = 0.0;
-	posFixed[2] = 0.0;
-
 	pos[0] = 3.0;
 	pos[1] = 0.3;
 	pos[2] = 0.0;
 
 	ppos[0] = 3.0;
-	ppos[1] = 1.0;
+	ppos[1] = 0.3;
 	ppos[2] = 0.0;
 
 	vel[0] = 0.5;
@@ -21,7 +17,7 @@ Plane::Plane() {
 	pvel[1] = 0.0;
 	pvel[2] = 0.0;
 
-	radio1 = 0.8;
+	radio1 = 0.3;
 	radio2 = 0.3;
 
 	accUser[0] = 0.0;
@@ -32,12 +28,11 @@ Plane::Plane() {
 	acc[1] = 0.0;
 	acc[2] = 0.0;
 
-	deltaT = 0.0001;
+	deltaT = 0.001;
+
+	accIncrement = 100;
 
 	move = true;
-
-	xRot = 0.f;
-	yRot = 0.f;
 }
 
 void Plane::SetNormalMaterial(void) {
@@ -68,11 +63,56 @@ void Plane::SetCollisionMaterial(void) {
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
 }
 
+bool Plane::Collision(float x, float y, float z, float radio) {
+
+	float distance = sqrt((pos[0] - 0.0) * (pos[0] - 0.0) + (pos[1] - 0.0) * (pos[1] - 0.0) + (pos[2] - 0.0) * (pos[2] - 0.0));
+
+	if (distance < (radio + radio2)) {
+		return true;
+	}
+
+	return false;
+}
+
+void Plane::ToggleMove()
+{
+	move = !move;
+}
+
+void Plane::Up()
+{
+	accUser[1] += 100;
+}
+
+void Plane::Down()
+{
+	accUser[1] -= 100;
+}
+
+void Plane::Left()
+{
+	accUser[2] += 100;
+}
+
+void Plane::Right()
+{
+	accUser[2] -= 100;
+}
+
 void Plane::Fly() {
 	SetNormalMaterial();
+
+	glPushMatrix();
+	glTranslatef(0.0, 0.3, 0.0);
+	glutWireSphere(radio1, 8, 8);
+	glutSolidTeapot(radio1);
+	glPopMatrix();
+
+	float distance = sqrt((pos[0] - 0.0) * (pos[0] - 0.0) + (pos[1] - 0.0) * (pos[1] - 0.0) + (pos[2] - 0.0) * (pos[2] - 0.0));
+
 	if (move) {
 		// Acceleration
-		acc[0] = -9.81 + accUser[0];
+		acc[0] = -0.1 + accUser[0];
 		acc[1] = 0.0 + accUser[1];
 		acc[2] = 0.0 + accUser[2];
 
@@ -91,49 +131,46 @@ void Plane::Fly() {
 		}
 	}
 
+	if (Collision(0.0, 0.0, 0.0, radio1)) {
+		SetCollisionMaterial();
+	}
+
 	// Movable teapot
 	glPushMatrix();
 	glTranslated(pos[0], pos[1], pos[2]);
-
-	glRotatef(-xRot, 0, 0, 1);		// Rotar en z es tiltUp/Down
-	glRotatef(yRot, 1, 0, 0);		// Rotar en x es left/right
-
 	glutWireSphere(radio2, 8, 8);
 	glutSolidTeapot(radio2);
-
 	glPopMatrix();
 
-	// Tiles
-	{
-		glPushMatrix();
-		SetCollisionMaterial();
-		glTranslatef(4.0, -0.25, 4.0);
-		glScalef(8.0, 0.5, 8.0);
-		glutSolidCube(1.0);
-		glPopMatrix();
+#pragma region Tiles
+	glPushMatrix();
+	SetCollisionMaterial();
+	glTranslatef(4.0, -0.25, 4.0);
+	glScalef(8.0, 0.5, 8.0);
+	glutSolidCube(1.0);
+	glPopMatrix();
 
-		glPushMatrix();
-		SetNormalMaterial();
-		glTranslatef(4.0, -0.25, -4.0);
-		glScalef(8.0, 0.5, 8.0);
-		glutSolidCube(1.0);
-		glPopMatrix();
+	glPushMatrix();
+	SetNormalMaterial();
+	glTranslatef(4.0, -0.25, -4.0);
+	glScalef(8.0, 0.5, 8.0);
+	glutSolidCube(1.0);
+	glPopMatrix();
 
-		glPushMatrix();
-		SetCollisionMaterial();
-		glTranslatef(-4.0, -0.25, -4.0);
-		glScalef(8.0, 0.5, 8.0);
-		glutSolidCube(1.0);
-		glPopMatrix();
+	glPushMatrix();
+	SetCollisionMaterial();
+	glTranslatef(-4.0, -0.25, -4.0);
+	glScalef(8.0, 0.5, 8.0);
+	glutSolidCube(1.0);
+	glPopMatrix();
 
-		glPushMatrix();
-		SetNormalMaterial();
-		glTranslatef(-4.0, -0.25, 4.0);
-		glScalef(8.0, 0.5, 8.0);
-		glutSolidCube(1.0);
-		glPopMatrix();
-	}
-	// End Tiles
+	glPushMatrix();
+	SetNormalMaterial();
+	glTranslatef(-4.0, -0.25, 4.0);
+	glScalef(8.0, 0.5, 8.0);
+	glutSolidCube(1.0);
+	glPopMatrix();
+#pragma endregion
 
 	for (int i = 0; i < 3; i++) {
 		ppos[i] = pos[i];
@@ -147,7 +184,7 @@ void Plane::Reset() {
 	pos[2] = 0.0;
 
 	ppos[0] = 3.0;
-	ppos[1] = 1.0;
+	ppos[1] = 0.3;
 	ppos[2] = 0.0;
 
 	vel[0] = 0.5;
@@ -157,26 +194,6 @@ void Plane::Reset() {
 	pvel[0] = 0.0;
 	pvel[1] = 0.0;
 	pvel[2] = 0.0;
-}
-
-void Plane::TiltUp() {
-	if(xRot < 40)
-		xRot++;
-}
-
-void Plane::TiltDown() {
-	if (xRot > -40)
-		xRot--;
-}
-
-void Plane::TiltLeft() {
-	if (yRot < 50)
-		yRot++;
-}
-
-void Plane::TiltRight() {
-	if (yRot > 50)
-		yRot--;
 }
 
 Plane::~Plane() {}
