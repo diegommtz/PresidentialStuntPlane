@@ -1,17 +1,14 @@
 #pragma once
-#include <Windows.h>	// Comment this line if Linux
-#include<GL/glut.h>		//"glut.h" if local
-#include<GL/gl.h>		
-#include <stdlib.h>		// Library used for random method
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <math.h>
+#include <iostream>
+#include <stdio.h>
 
 class Plane
 {
 public:
-	/// <summary>
-	/// position of static sphere
-	/// </summary>
-	float posFixed[3];
-
 	/// <summary>
 	/// current position
 	/// </summary>
@@ -62,25 +59,19 @@ public:
 	/// </summary>
 	float accUser[3] = { 0.0 };
 
-
-	// TEMP VALUES
-	float xRot;
-	float yRot;
-	// TEMP VALUES
+	float accIncrement;
 
 	Plane();
 	void SetNormalMaterial();
 	void SetCollisionMaterial();
 	void Fly();
 	void Reset();
-
-	//TEMP METHODS
-	void TiltUp();
-	void TiltDown();
-	void TiltLeft();
-	void TiltRight();
-
-
+	bool Collision(float x, float y, float z, float radio);
+	void ToggleMove();
+	void Up();
+	void Down();
+	void Left();
+	void Right();
 	~Plane();
 };
 

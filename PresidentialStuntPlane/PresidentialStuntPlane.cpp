@@ -129,7 +129,7 @@ void keyboard(unsigned char key, int x, int y)
 		plane->Reset();
 		break;
 	case'm':
-		plane->move = !plane->move;
+		plane->ToggleMove();
 		break;
 	}
 }
@@ -137,18 +137,16 @@ void keyboard(unsigned char key, int x, int y)
 void processSpecialKeys(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
-		plane->TiltUp();
-		//plane->accUser[1] += 1000;
+		plane->Up();
 		break;
 	case GLUT_KEY_DOWN:
-		plane->TiltDown();
-		//plane->accUser[1] -= 1000;
+		plane->Down();
 		break;
 	case GLUT_KEY_LEFT:
-		plane->accUser[2] += 1000;
+		plane->Left();
 		break;
 	case GLUT_KEY_RIGHT:
-		plane->accUser[2] -= 1000;
+		plane->Right();
 		break;
 	}
 	glutPostRedisplay();
