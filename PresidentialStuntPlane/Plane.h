@@ -54,18 +54,31 @@ public:
 	/// </summary>
 	bool move = false;
 
-	/// <summary>
-	/// smoother movement
-	/// </summary>
-	float accUser[3] = { 0.0 };
-
 	float accIncrement;
 
-	//TEMP vars
+	/// <summary>
+	/// Rotation degrees on X axis
+	/// </summary>
 	float rotX;
+
+	/// <summary>
+	/// Rotation degrees on Z axis
+	/// </summary>
 	float rotZ;
+
+	/// <summary>
+	/// Tilting degrees of the plane
+	/// </summary>
 	float visRot;
-	int tiltClick;
+
+	/// <summary>
+	/// Timer before returning tilt to original position
+	/// </summary>
+	int tiltTimer;
+
+	/// <summary>
+	/// Position of the camera
+	/// </summary>
 	float camPos[3];
 
 
