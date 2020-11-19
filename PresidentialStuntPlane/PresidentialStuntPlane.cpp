@@ -1,5 +1,5 @@
 #include <Windows.h>	// Comment this line if Linux
-#include<GL/glut.h>		//"glut.h" if local
+#include<glut.h>		//"glut.h" if local
 #include<GL/gl.h>		
 #include <stdlib.h>		// Library used for random method
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <GL/gl.h>
-#include <GL/glut.h>
+#include <glut.h>
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
