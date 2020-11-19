@@ -61,6 +61,17 @@ public:
 
 	float accIncrement;
 
+	//TEMP vars
+	float rotX;
+	float rotZ;
+	float visRot;
+	int tiltClick;
+
+
+	//DEBUG
+	bool brPoint = false;
+	//TEMP vars
+
 	Plane();
 	void SetNormalMaterial();
 	void SetCollisionMaterial();

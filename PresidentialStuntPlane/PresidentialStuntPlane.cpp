@@ -138,9 +138,11 @@ void processSpecialKeys(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
 		plane->Up();
+		glutPostRedisplay();
 		break;
 	case GLUT_KEY_DOWN:
 		plane->Down();
+		glutPostRedisplay();
 		break;
 	case GLUT_KEY_LEFT:
 		plane->Left();
