@@ -3,9 +3,41 @@
 #include<GL/gl.h>		
 #include <stdlib.h>		// Library used for random method
 
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
 #include "Plane.h"
+#include<vector>
+#include "Sphere.h"
 
 Plane* plane;
+
+//para los randompoints de las esferas
+float rp1;
+float rp2;
+float rp3;
+int numberSpheres = 5;
+float r[100][3];
+std::vector<Sphere> powerUps;
+
+static void Timer(int value) {
+	//respawnFlag = !respawnFlag;
+	/* initialize random seed: */
+	srand(time(NULL));
+	for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-50) + rand() % 101) / 5;
+		//rp2 = (float)((-50) + rand() % 101) / 5;
+		rp3 = (float)((-50) + rand() % 101) / 5;
+		rp2 = (float)(rand() % 100) / 5;
+		r[i][0] = rp1;
+		r[i][1] = rp2;
+		r[i][2] = rp3;
+	}
+
+	glutPostRedisplay();
+	// 100 milliseconds
+	glutTimerFunc(5000, Timer, 0);
+}
 
 
 void customInitialize(void)
@@ -43,6 +75,22 @@ void customInitialize(void)
 
 	// Enable lighting
 	//glEnable(GL_LIGHTING);
+
+	 //Creo objetos
+	for (int i = 0; i < numberSpheres; i++) {
+		Sphere sphere;
+		powerUps.push_back(sphere);
+	}
+
+	//seteo objetos
+	for (int i = 0; i < numberSpheres; i++) {
+		powerUps[i].setCube();
+	}
+
+	//// initialize texture
+	//InitializeTexture(myTex, &name[0], (char*)"C:/Users/ednamo/Desktop/TEC/energy.bmp");
+
+
 
 	// Enable depth testing (for hidden surface removal)
 	glEnable(GL_DEPTH_TEST);
@@ -94,9 +142,20 @@ void display(void)
 	gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
 	//gluLookAt(plane->pos[0] + 5, plane->pos[1] + 0.3, plane->pos[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
 
+	glPushMatrix();
 	DrawAxis();
 
 	plane->Fly();
+	glPopMatrix();
+
+	//Dibuja esferas
+	glPushMatrix(); {
+		glScalef(0.1, 0.1, 0.1);
+		for (int i = 0; i < numberSpheres; i++) {
+			powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
+		}
+	}
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -183,6 +242,7 @@ int main(int argc, char** argv)
 	glutIdleFunc(display);
 	glutSpecialFunc(processSpecialKeys);
 
+	Timer(0);
 	// Do main loop
 	glutMainLoop();
 
