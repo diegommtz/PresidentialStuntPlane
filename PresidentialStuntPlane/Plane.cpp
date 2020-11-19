@@ -108,9 +108,11 @@ void Plane::Left()
 		visRot-=1;
 
 		rotX -= 2;
-
-	brPoint = true;
 	//accUser[2] += 100;
+}
+
+void Plane::Debug() {
+	Plane::brPoint = true;
 }
 
 void Plane::Right()
@@ -130,19 +132,17 @@ float* Plane::GetPosition() {
 }
 
 float* Plane::GetCamPosition() {
-
-
-	//return 
+	return camPos;
 }
 
 void Plane::Fly() {
 	SetNormalMaterial();
 
-	glPushMatrix();
+	/*glPushMatrix();
 	glTranslatef(0.0, 0.3, 0.0);
 	glutWireSphere(radio1, 8, 8);
 	glutSolidTeapot(radio1);
-	glPopMatrix();
+	glPopMatrix();*/
 
 	float distance = sqrt((pos[0] - 0.0) * (pos[0] - 0.0) + (pos[1] - 0.0) * (pos[1] - 0.0) + (pos[2] - 0.0) * (pos[2] - 0.0));
 
@@ -166,21 +166,12 @@ void Plane::Fly() {
 		float angleX = rotX * PI / 180;
 
 		vel[0] = totalVel * cos(angleZ);
-		vel[1] = totalVel * sin(angleZ);
-		
+		vel[1] = totalVel * sin(angleZ);		
+
 		float xTempVel = vel[0];
 
 		vel[0] = xTempVel * cos(angleX);
 		vel[2] = xTempVel * sin(angleX);
-
-
-		if (brPoint)
-		{
-			int a = 3;
-			a++;
-
-			brPoint = false;
-		}
 
 		std::cout << rotX << "\t" << visRot << "\t" << vel[0] << "\t" << vel[1] << "\t" << vel[2] << "\n";
 
@@ -188,7 +179,25 @@ void Plane::Fly() {
 		//Position
 		for (int i = 0; i < 3; i++) {
 			pos[i] = ppos[i] + vel[i] * deltaT;
-		}
+		}		
+
+		//Cam position
+		//camPos[0] = (3 * cos(angleZ));
+		
+
+
+		float z = 5 * sin(angleX);
+		float x = 5 * cos(angleX);
+				
+		camPos[0] = pos[0] - x;
+		camPos[1] = pos[1];
+		camPos[2] = pos[2] - z;
+
+		if (brPoint){
+			int a = 3;
+			a++;
+			brPoint = false;}
+
 	}
 
 	if (Collision(0.0, 0.0, 0.0, radio1)) {

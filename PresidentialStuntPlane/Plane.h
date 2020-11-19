@@ -66,15 +66,20 @@ public:
 	float rotZ;
 	float visRot;
 	int tiltClick;
+	float camPos[3];
 
 
 	//DEBUG
 	bool brPoint = false;
+	void Debug();
 	//TEMP vars
 
 	Plane();
 	void SetNormalMaterial();
 	void SetCollisionMaterial();
+	float* GetPosition();
+	float* GetCamPosition();
+
 	void Fly();
 	void Reset();
 	bool Collision(float x, float y, float z, float radio);
