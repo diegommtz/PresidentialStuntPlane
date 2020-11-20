@@ -1,5 +1,7 @@
 #include "Plane.h"
 
+#define PI 3.14159265358979
+
 Plane::Plane() {
 	pos[0] = 3.0;
 	pos[1] = 0.3;
@@ -13,16 +15,12 @@ Plane::Plane() {
 	vel[1] = 0.0;
 	vel[2] = 0.0;
 
-	pvel[0] = 0.0;
+	pvel[0] = 2.0;
 	pvel[1] = 0.0;
 	pvel[2] = 0.0;
 
 	radio1 = 0.3;
 	radio2 = 0.3;
-
-	accUser[0] = 0.0;
-	accUser[1] = 0.0;
-	accUser[2] = 0.0;
 
 	acc[0] = 0.0;
 	acc[1] = 0.0;
@@ -33,6 +31,11 @@ Plane::Plane() {
 	accIncrement = 100;
 
 	move = true;
+
+	rotX = 0;
+	rotZ = 0;
+	visRot = 0;
+	tiltTimer = 0;
 }
 
 void Plane::SetNormalMaterial(void) {
@@ -81,54 +84,101 @@ void Plane::ToggleMove()
 
 void Plane::Up()
 {
-	accUser[1] += 100;
+	if (rotZ < 30)
+		rotZ+=2;
 }
 
 void Plane::Down()
 {
-	accUser[1] -= 100;
+	if (rotZ > -30)
+		rotZ-=1;
 }
 
 void Plane::Left()
 {
-	accUser[2] += 100;
+	tiltTimer = 100;
+
+	if (visRot > -45)
+		visRot-=1;
+
+	rotX -= 2;
 }
 
 void Plane::Right()
 {
-	accUser[2] -= 100;
+	tiltTimer = 100;
+
+	if (visRot < 45)
+		visRot+=2;
+
+	rotX += 2;
+}
+
+void Plane::Debug() {
+	Plane::brPoint = true;
+
+	//Copy pastea esto en cualquier parte del código y pon un breakpoint. Al presionar Q se ejecuta.
+	/*if (brPoint) {
+		int a = 3;
+		a++;
+		brPoint = false;
+	}*/
+}
+
+float* Plane::GetPosition() {
+	return pos;
+}
+
+float* Plane::GetCamPosition() {
+	return camPos;
 }
 
 void Plane::Fly() {
 	SetNormalMaterial();
 
+	/*
 	glPushMatrix();
 	glTranslatef(0.0, 0.3, 0.0);
 	glutWireSphere(radio1, 8, 8);
 	glutSolidTeapot(radio1);
 	glPopMatrix();
+	*/
 
 	float distance = sqrt((pos[0] - 0.0) * (pos[0] - 0.0) + (pos[1] - 0.0) * (pos[1] - 0.0) + (pos[2] - 0.0) * (pos[2] - 0.0));
 
-	if (move) {
-		// Acceleration
-		acc[0] = -0.1 + accUser[0];
-		acc[1] = 0.0 + accUser[1];
-		acc[2] = 0.0 + accUser[2];
-
-		accUser[0] = 0.0;
-		accUser[1] = 0.0;
-		accUser[2] = 0.0;
+	if (move) {		
 
 		// Velocity
 		for (int i = 0; i < 3; i++) {
 			vel[i] = pvel[i] + acc[i] * deltaT;
 		}
 
+		// Get velocity vector
+		float totalVel = sqrt(pow(vel[0], 2) + pow(vel[1], 2) + pow(vel[2], 2));
+
+		// Convert degrees to radians
+		float angleZ = rotZ * PI / 180;
+		float angleX = rotX * PI / 180;
+
+		//Get velocities using trigonometric principles
+		float xTempVel = totalVel * cos(angleZ);	//Velocity on x-z
+		vel[0] = xTempVel * cos(angleX);
+		vel[1] = totalVel * sin(angleZ);		
+		vel[2] = xTempVel * sin(angleX);
+
 		//Position
 		for (int i = 0; i < 3; i++) {
 			pos[i] = ppos[i] + vel[i] * deltaT;
-		}
+		}		
+
+		//Camera position
+		float z = 5 * sin(angleX);
+		float x = 5 * cos(angleX);
+				
+		camPos[0] = pos[0] - x;
+		camPos[1] = pos[1];
+		camPos[2] = pos[2] - z;		
+
 	}
 
 	if (Collision(0.0, 0.0, 0.0, radio1)) {
@@ -138,6 +188,22 @@ void Plane::Fly() {
 	// Movable teapot
 	glPushMatrix();
 	glTranslated(pos[0], pos[1], pos[2]);
+
+	//Rotation
+	glRotated(-rotX, 0, 1, 0);		// Rotation y - Left/Right
+	glRotated(visRot, 1, 0, 0);		// Rotation x - Tilting to sides
+	glRotated(rotZ, 0, 0, 1);		// Rotation z - Up/Down
+
+	//Return side tilting to original rotation (timer)
+	if (tiltTimer > 0) {
+		tiltTimer--;
+	}else{
+		if (visRot > 0)
+			visRot -= 0.1f;
+		else if (visRot < 0)
+			visRot += 0.1f;
+	}
+
 	glutWireSphere(radio2, 8, 8);
 	glutSolidTeapot(radio2);
 	glPopMatrix();
@@ -172,6 +238,7 @@ void Plane::Fly() {
 	glPopMatrix();
 #pragma endregion
 
+	//Update positions
 	for (int i = 0; i < 3; i++) {
 		ppos[i] = pos[i];
 		pvel[i] = vel[i];

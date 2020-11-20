@@ -86,7 +86,12 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	gluLookAt(plane->pos[0] + 5, plane->pos[1] + 0.3, plane->pos[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
+
+	float* camPosition;
+	camPosition = plane->GetCamPosition();
+
+	gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
+	//gluLookAt(plane->pos[0] + 5, plane->pos[1] + 0.3, plane->pos[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
 
 	DrawAxis();
 
@@ -130,6 +135,9 @@ void keyboard(unsigned char key, int x, int y)
 	case'm':
 		plane->ToggleMove();
 		break;
+	case 'q':
+		plane->Debug();
+		break;
 	}
 }
 
@@ -137,9 +145,11 @@ void processSpecialKeys(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
 		plane->Up();
+		glutPostRedisplay();
 		break;
 	case GLUT_KEY_DOWN:
 		plane->Down();
+		glutPostRedisplay();
 		break;
 	case GLUT_KEY_LEFT:
 		plane->Left();
@@ -160,7 +170,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(400, 400);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Sierpinski Triangle");
+	glutCreateWindow("Presidential Stunt Plane");
 
 	// Additional initialization
 	customInitialize();

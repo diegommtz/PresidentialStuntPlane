@@ -54,16 +54,45 @@ public:
 	/// </summary>
 	bool move = false;
 
-	/// <summary>
-	/// smoother movement
-	/// </summary>
-	float accUser[3] = { 0.0 };
-
 	float accIncrement;
+
+	/// <summary>
+	/// Rotation degrees on X axis
+	/// </summary>
+	float rotX;
+
+	/// <summary>
+	/// Rotation degrees on Z axis
+	/// </summary>
+	float rotZ;
+
+	/// <summary>
+	/// Tilting degrees of the plane
+	/// </summary>
+	float visRot;
+
+	/// <summary>
+	/// Timer before returning tilt to original position
+	/// </summary>
+	int tiltTimer;
+
+	/// <summary>
+	/// Position of the camera
+	/// </summary>
+	float camPos[3];
+
+
+	//DEBUG
+	bool brPoint = false;
+	void Debug();
+	//TEMP vars
 
 	Plane();
 	void SetNormalMaterial();
 	void SetCollisionMaterial();
+	float* GetPosition();
+	float* GetCamPosition();
+
 	void Fly();
 	void Reset();
 	bool Collision(float x, float y, float z, float radio);
