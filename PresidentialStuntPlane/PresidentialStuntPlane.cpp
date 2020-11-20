@@ -1,8 +1,7 @@
 #include <Windows.h>	// Comment this line if Linux
-#include<GL/glut.h>		//"glut.h" if local
 #include<GL/gl.h>		
+#include<GL/glut.h>		//"glut.h" if local
 #include <stdlib.h>		// Library used for random method
-
 #include "Plane.h"
 
 Plane* plane;
