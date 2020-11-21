@@ -3,9 +3,10 @@
 #include<GL/glut.h>		//"glut.h" if local
 #include <stdlib.h>		// Library used for random method
 #include "Plane.h"
+#include "Terrain.h"
 
 Plane* plane;
-
+Terrain* terrain;
 
 void customInitialize(void)
 {
@@ -47,6 +48,7 @@ void customInitialize(void)
 	glEnable(GL_DEPTH_TEST);
 
 	plane = new Plane();
+	terrain = new Terrain();
 }
 
 void DrawAxis(void)
@@ -95,6 +97,7 @@ void display(void)
 
 	DrawAxis();
 
+	terrain->Build();
 	plane->Fly();
 
 	glutSwapBuffers();
