@@ -1,6 +1,7 @@
 #include "Plane.h"
 
 #define PI 3.14159265358979
+Mesh* myMesh;
 
 Plane::Plane() {
 	pos[0] = 3.0;
@@ -36,6 +37,11 @@ Plane::Plane() {
 	rotZ = 0;
 	visRot = 0;
 	tiltTimer = 0;
+
+	char arr[] = "C://Users/crl_s/OneDrive/Escritorio/Beriev_A50/BerievA50.obj";
+	char* file = &arr[0];
+
+	myMesh = new Mesh(file);
 }
 
 void Plane::SetNormalMaterial(void) {
@@ -146,7 +152,7 @@ void Plane::Fly() {
 
 	float distance = sqrt((pos[0] - 0.0) * (pos[0] - 0.0) + (pos[1] - 0.0) * (pos[1] - 0.0) + (pos[2] - 0.0) * (pos[2] - 0.0));
 
-	if (move) {		
+	if (move) {
 
 		// Velocity
 		for (int i = 0; i < 3; i++) {
@@ -163,21 +169,21 @@ void Plane::Fly() {
 		//Get velocities using trigonometric principles
 		float xTempVel = totalVel * cos(angleZ);	//Velocity on x-z
 		vel[0] = xTempVel * cos(angleX);
-		vel[1] = totalVel * sin(angleZ);		
+		vel[1] = totalVel * sin(angleZ);
 		vel[2] = xTempVel * sin(angleX);
 
 		//Position
 		for (int i = 0; i < 3; i++) {
 			pos[i] = ppos[i] + vel[i] * deltaT;
-		}		
+		}
 
 		//Camera position
 		float z = 5 * sin(angleX);
 		float x = 5 * cos(angleX);
-				
+
 		camPos[0] = pos[0] - x;
 		camPos[1] = pos[1];
-		camPos[2] = pos[2] - z;		
+		camPos[2] = pos[2] - z;
 
 	}
 
@@ -197,7 +203,8 @@ void Plane::Fly() {
 	//Return side tilting to original rotation (timer)
 	if (tiltTimer > 0) {
 		tiltTimer--;
-	}else{
+	}
+	else {
 		if (visRot > 0)
 			visRot -= 0.1f;
 		else if (visRot < 0)
@@ -205,38 +212,12 @@ void Plane::Fly() {
 	}
 
 	glutWireSphere(radio2, 8, 8);
-	glutSolidTeapot(radio2);
+	myMesh->NormalizeMesh();
+	//myMesh->DrawBoundingBox();
+	glRotated(90, 0.0, 1.0, 0.0);
+	myMesh->Draw();
+	//glutSolidTeapot(radio2);
 	glPopMatrix();
-
-#pragma region Tiles
-	glPushMatrix();
-	SetCollisionMaterial();
-	glTranslatef(4.0, -0.25, 4.0);
-	glScalef(8.0, 0.5, 8.0);
-	glutSolidCube(1.0);
-	glPopMatrix();
-
-	glPushMatrix();
-	SetNormalMaterial();
-	glTranslatef(4.0, -0.25, -4.0);
-	glScalef(8.0, 0.5, 8.0);
-	glutSolidCube(1.0);
-	glPopMatrix();
-
-	glPushMatrix();
-	SetCollisionMaterial();
-	glTranslatef(-4.0, -0.25, -4.0);
-	glScalef(8.0, 0.5, 8.0);
-	glutSolidCube(1.0);
-	glPopMatrix();
-
-	glPushMatrix();
-	SetNormalMaterial();
-	glTranslatef(-4.0, -0.25, 4.0);
-	glScalef(8.0, 0.5, 8.0);
-	glutSolidCube(1.0);
-	glPopMatrix();
-#pragma endregion
 
 	//Update positions
 	for (int i = 0; i < 3; i++) {
