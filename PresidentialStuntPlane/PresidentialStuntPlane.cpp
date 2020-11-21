@@ -1,12 +1,7 @@
 #include <Windows.h>	// Comment this line if Linux
-<<<<<<< HEAD
-#include<glut.h>		//"glut.h" if local
-=======
->>>>>>> 56254d064da13207ab051f0ef754bf5167cd7ce9
 #include<GL/gl.h>		
-#include<GL/glut.h>		//"glut.h" if local
+#include<glut.h>		//"glut.h" if local
 #include <stdlib.h>		// Library used for random method
-<<<<<<< HEAD
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
@@ -17,23 +12,59 @@
 
 Plane* plane;
 
+
+//#include "TextureSetup.h"
+//static GLuint name[1];
+//RGBpixmap myTex;
+
 //para los randompoints de las esferas
 float rp1;
 float rp2;
 float rp3;
 int numberSpheres = 5;
 float r[100][3];
-std::vector<Sphere> powerUps;
 
+std::vector<Sphere> powerUps;
+vector<Sphere> a;
+
+#include "Terrain.h"
+
+Terrain* terrain;
+
+void nRan() {
+	srand(time(NULL));
+	for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-10) + rand() % 21);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-10) + rand() % 21);
+		
+		
+		r[i][0] = rp1;
+		r[i][1] = rp2;
+		r[i][2] = rp3;
+	}
+}
+
+//Cambia la posición de la esfera que tuvo colisión con el avión
+void changePos(int thePos) {
+	srand(time(NULL));
+		rp1 = (float)((-10) + rand() % 21);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-10) + rand() % 21);
+		r[thePos][0] = rp1;
+		r[thePos][1] = rp2;
+		r[thePos][2] = rp3;
+}
+
+//SI SE USA ESTE, DESBLOQUER TIMER EN MAIN
 static void Timer(int value) {
 	//respawnFlag = !respawnFlag;
 	/* initialize random seed: */
 	srand(time(NULL));
 	for (int i = 0; i < numberSpheres; i++) {
-		rp1 = (float)((-50) + rand() % 101) / 5;
-		//rp2 = (float)((-50) + rand() % 101) / 5;
-		rp3 = (float)((-50) + rand() % 101) / 5;
-		rp2 = (float)(rand() % 100) / 5;
+		rp1 = (float)((-2) + rand() % 5);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-2) + rand() % 5);
 		r[i][0] = rp1;
 		r[i][1] = rp2;
 		r[i][2] = rp3;
@@ -44,13 +75,7 @@ static void Timer(int value) {
 	glutTimerFunc(5000, Timer, 0);
 }
 
-=======
-#include "Plane.h"
-#include "Terrain.h"
 
-Plane* plane;
-Terrain* terrain;
->>>>>>> 56254d064da13207ab051f0ef754bf5167cd7ce9
 
 void customInitialize(void)
 {
@@ -99,9 +124,24 @@ void customInitialize(void)
 		powerUps[i].setCube();
 	}
 
+	Sphere sphere;
+	a.push_back(sphere);
+	a[0].setCube();
+
 	//// initialize texture
 	//InitializeTexture(myTex, &name[0], (char*)"C:/Users/ednamo/Desktop/TEC/energy.bmp");
 
+	srand(time(NULL));
+	for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-2) + rand() % 5);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-2) + rand() % 5);
+
+		cout << rp1 << " " << rp2 << " " << rp3 << endl;
+		r[i][0] = rp1;
+		r[i][1] = rp2;
+		r[i][2] = rp3;
+	}
 
 
 	// Enable depth testing (for hidden surface removal)
@@ -164,12 +204,34 @@ void display(void)
 
 	//Dibuja esferas
 	glPushMatrix(); {
-		glScalef(0.1, 0.1, 0.1);
 		for (int i = 0; i < numberSpheres; i++) {
 			powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
 		}
 	}
 	glPopMatrix();
+
+	for (int i = 0; i < numberSpheres; i++) {//Error 2-4
+		if (powerUps[i].collision(plane->GetPosition(), 0.3)) {
+			changePos(i);
+			break;
+		}
+	}
+
+
+
+	//if (a.size() > 0) {
+	//	a[0].sphereEnergy(r[0][0], r[0][1], r[0][2]);
+	//}
+
+
+	//if (a.size() > 0) {
+	//	if (a[0].collision(plane->GetPosition(), 0.3)) {
+	//		//a.erase(a.begin());
+	//		nRan();
+	//		cout << "Borrado" << endl;
+	//	}
+	//}
+	//
 
 	glutSwapBuffers();
 }
@@ -256,7 +318,7 @@ int main(int argc, char** argv)
 	glutIdleFunc(display);
 	glutSpecialFunc(processSpecialKeys);
 
-	Timer(0);
+	//Timer(0);
 	// Do main loop
 	glutMainLoop();
 

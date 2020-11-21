@@ -35,8 +35,9 @@ GLfloat s[4], t[4];
 
 int depth = 2;
 float radio;
+float myradio=0.1;
 
-float myPos[3];
+//float myPos[3];
 
 void Normalize(Vertex* vectorIn)
 {
@@ -56,18 +57,24 @@ class Sphere
 private:
 
 public:
+    float myPos[3];
     Sphere();
     ~Sphere();
     void setCube();
     void sphereEnergy(float,float,float);
 
-    bool collision(float*);
+    bool collision(float*,float);
 
     float* getPos();
+
+    void SetNormalMaterial(void);
+    void SetCollisionMaterial(void);
+
 };
 
 Sphere::Sphere() {
     radio = sqrt(0.25 + 0.25 + 0.25);
+    //radio = sqrt(0.2);
     // Texture coords
    /* GLfloat s[4], t[4];*/
 
@@ -196,23 +203,25 @@ void subdivide(Vertex v0, Vertex v1, Vertex v2, Vertex v3, Vertex n0, Vertex n1,
     if (depth == 0)
     {
         glBegin(GL_QUADS);
+        glPushMatrix(); {
+            glScaled(0.2, 0.2, 0.2);
+            glTexCoord2f(s[0], t[0]);
+            glNormal3f(n0.x, n0.y, n0.z);
+            glVertex3f(v0.x, v0.y, v0.z);
 
-        glTexCoord2f(s[0], t[0]);
-        glNormal3f(n0.x, n0.y, n0.z);
-        glVertex3f(v0.x, v0.y, v0.z);
+            glTexCoord2f(s[1], t[1]);
+            glNormal3f(n1.x, n1.y, n1.z);
+            glVertex3f(v1.x, v1.y, v1.z);
 
-        glTexCoord2f(s[1], t[1]);
-        glNormal3f(n1.x, n1.y, n1.z);
-        glVertex3f(v1.x, v1.y, v1.z);
+            glTexCoord2f(s[2], t[2]);
+            glNormal3f(n2.x, n2.y, n2.z);
+            glVertex3f(v2.x, v2.y, v2.z);
 
-        glTexCoord2f(s[2], t[2]);
-        glNormal3f(n2.x, n2.y, n2.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-
-        glTexCoord2f(s[3], t[3]);
-        glNormal3f(n3.x, n3.y, n3.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-
+            glTexCoord2f(s[3], t[3]);
+            glNormal3f(n3.x, n3.y, n3.z);
+            glVertex3f(v3.x, v3.y, v3.z);
+        }
+        glPopMatrix();
         glEnd();
     }
     else
@@ -515,16 +524,22 @@ void Sphere::sphereEnergy(float rp1, float rp2, float rp3 ) {
     GLfloat mat_spec[] = { 3000.0, 3000.0, 3000.0, 3000.0 };
     GLfloat mat_shiny[] = { 100.0 };
     GLfloat mat_surf[] = { 1.0, 1.0, 0.0, 0.0 };
-    glPushMatrix();
-    glTranslated(rp1, rp2, rp3);
 
-    for (int i = 0; i < 6; i++) {
-        //SetMaterials(&mat_surf[0], &mat_spec[0], &mat_shiny[0]);
-        //subdivide(vertices[faces[i].a], vertices[faces[i].b], vertices[faces[i].c], vertices[faces[i].d], normals[faces[i].a], normals[faces[i].b], normals[faces[i].c], normals[faces[i].d], depth);
+    glPushMatrix(); {
+        glTranslated(rp1, rp2, rp3);
+        glutWireSphere(myradio, 8, 8);
+        glPushMatrix(); {
+            glScaled(0.2,0.2,0.2);
+            for (int i = 0; i < 6; i++) {
+                //SetMaterials(&mat_surf[0], &mat_spec[0], &mat_shiny[0]);
+                //subdivide(vertices[faces[i].a], vertices[faces[i].b], vertices[faces[i].c], vertices[faces[i].d], normals[faces[i].a], normals[faces[i].b], normals[faces[i].c], normals[faces[i].d], depth);
 
-        //SetMaterials(&mat_surf[0], &mat_spec[0], &mat_shiny[0]);
-        ////subdivide( vertices[ faces[i].a ],  vertices[ faces[i].b ],  vertices[ faces[i].c ],  vertices[ faces[i].d ], normals[ faces[i].a ], normals[ faces[i].b ], normals[ faces[i].c ], normals[ faces[i].d ], depth);
-        subdivide(vertices[faces[i].a], vertices[faces[i].b], vertices[faces[i].c], vertices[faces[i].d], normals[faces[i].a], normals[faces[i].b], normals[faces[i].c], normals[faces[i].d], &s[0], &t[0], depth);
+                //SetMaterials(&mat_surf[0], &mat_spec[0], &mat_shiny[0]);
+                ////subdivide( vertices[ faces[i].a ],  vertices[ faces[i].b ],  vertices[ faces[i].c ],  vertices[ faces[i].d ], normals[ faces[i].a ], normals[ faces[i].b ], normals[ faces[i].c ], normals[ faces[i].d ], depth);
+                subdivide(vertices[faces[i].a], vertices[faces[i].b], vertices[faces[i].c], vertices[faces[i].d], normals[faces[i].a], normals[faces[i].b], normals[faces[i].c], normals[faces[i].d], &s[0], &t[0], depth);
+            }
+        }
+        glPopMatrix();
     }
     glPopMatrix();
 
@@ -537,7 +552,42 @@ float* Sphere::getPos() {
     return myPos;
 }
 
-bool Sphere::collision(float* otherPos) {
+bool Sphere::collision(float* otherPos,float otherRadio) {
+    //se calcula la distancia
+    bool tcollision=false;
+    float distance = sqrt((myPos[0] - otherPos[0]) * (myPos[0] - otherPos[0]) + (myPos[1] - otherPos[1]) * (myPos[1] - otherPos[1]) + (myPos[2] - otherPos[2]) * (myPos[2] - otherPos[2]));
+    if (distance < (myradio + otherRadio)) {
+        tcollision= true;
+    }
+    return tcollision;
     
-    return true;
 }
+
+
+//void Sphere::SetNormalMaterial(void) {
+//    // Emerald
+//    GLfloat mat_spec[] = { 0.633, 0.727811, 0.633, 1.0 };
+//    GLfloat mat_shiny[] = { 0.6 };
+//    GLfloat mat_amb[] = { 0.0215, 0.1745, 0.0215, 1.0 };
+//    GLfloat mat_dif[] = { 0.07568, 0.61424, 0.07568, 1.0 };
+//
+//    // SET material properties
+//    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_spec);
+//    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shiny);
+//    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
+//    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
+//}
+//
+//void Sphere::SetCollisionMaterial(void) {
+//    // RED
+//    GLfloat mat_spec[] = { 0.393548, 271906, 0.166721, 1.0 };
+//    GLfloat mat_shiny[] = { 0.2 };
+//    GLfloat mat_amb[] = { 0.8125, 0.1275, 0.054, 1.0 };
+//    GLfloat mat_dif[] = { 0.914, 0.2284, 0.18144, 1.0 };
+//
+//    // SET material properties
+//    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_spec);
+//    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shiny);
+//    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
+//    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
+//}
