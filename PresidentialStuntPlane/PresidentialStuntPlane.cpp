@@ -1,7 +1,12 @@
 #include <Windows.h>	// Comment this line if Linux
+<<<<<<< HEAD
 #include<glut.h>		//"glut.h" if local
+=======
+>>>>>>> 56254d064da13207ab051f0ef754bf5167cd7ce9
 #include<GL/gl.h>		
+#include<GL/glut.h>		//"glut.h" if local
 #include <stdlib.h>		// Library used for random method
+<<<<<<< HEAD
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
@@ -39,6 +44,13 @@ static void Timer(int value) {
 	glutTimerFunc(5000, Timer, 0);
 }
 
+=======
+#include "Plane.h"
+#include "Terrain.h"
+
+Plane* plane;
+Terrain* terrain;
+>>>>>>> 56254d064da13207ab051f0ef754bf5167cd7ce9
 
 void customInitialize(void)
 {
@@ -96,6 +108,7 @@ void customInitialize(void)
 	glEnable(GL_DEPTH_TEST);
 
 	plane = new Plane();
+	terrain = new Terrain();
 }
 
 void DrawAxis(void)
@@ -145,6 +158,7 @@ void display(void)
 	glPushMatrix();
 	DrawAxis();
 
+	terrain->Build();
 	plane->Fly();
 	glPopMatrix();
 
