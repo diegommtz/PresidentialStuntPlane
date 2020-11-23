@@ -1,19 +1,99 @@
 #include <Windows.h>	// Comment this line if Linux
 #include<GL/gl.h>		
-#include<GL/glut.h>		//"glut.h" if local
+#include <GL/glut.h>
 #include <stdlib.h>		// Library used for random method
+
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+#include<string.h>
+#include<vector>
 #include "Plane.h"
 #include "Terrain.h"
 #include "Menu.h"
 #include "Ring.h"
+#include "Sphere.h"
 
 // Game manager
 enum gameState { MainMenu, Play, Pause, GameOver } state;
 
 Plane* plane;
+
+
+//#include "TextureSetup.h"
+//static GLuint name[1];
+//RGBpixmap myTex;
+
+//para los randompoints de las esferas
+float rp1;
+float rp2;
+float rp3;
+int numberSpheres = 5;
+float r[100][3];
+
+std::vector<Sphere> powerUps;
+vector<Sphere> a;
+
+#include "Terrain.h"
+
 Terrain* terrain;
 Menu* menu;
 Ring* ring;
+
+int timeRemaining;
+
+void nRan() {
+	srand(time(NULL));
+	for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-10) + rand() % 21);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-10) + rand() % 21);
+		
+		
+		r[i][0] = rp1;
+		r[i][1] = rp2;
+		r[i][2] = rp3;
+	}
+}
+
+//Cambia la posici�n de la esfera que tuvo colisi�n con el avi�n
+void changePos(int thePos) {
+	srand(time(NULL));
+		rp1 = (float)((-10) + rand() % 21);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-10) + rand() % 21);
+		r[thePos][0] = rp1;
+		r[thePos][1] = rp2;
+		r[thePos][2] = rp3;
+}
+
+//SI SE USA ESTE, DESBLOQUER TIMER EN MAIN
+static void Timer(int value) {
+	//respawnFlag = !respawnFlag;
+	/* initialize random seed: */
+	srand(time(NULL));
+	for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-2) + rand() % 5);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-2) + rand() % 5);
+		r[i][0] = rp1;
+		r[i][1] = rp2;
+		r[i][2] = rp3;
+	}
+
+	glutPostRedisplay();
+	// 100 milliseconds
+	glutTimerFunc(5000, Timer, 0);
+}
+
+static void PlaneTimer(int value) {
+	
+	if (state != Play) return;
+
+	timeRemaining--;
+	std::cout << "Time Remaining: " << timeRemaining << std::endl;
+	glutTimerFunc(1000, PlaneTimer, 0);
+}
+
 
 void customInitialize(void)
 {
@@ -51,6 +131,37 @@ void customInitialize(void)
 	// Enable lighting
 	//glEnable(GL_LIGHTING);
 
+	 //Creo objetos
+	for (int i = 0; i < numberSpheres; i++) {
+		Sphere sphere;
+		powerUps.push_back(sphere);
+	}
+
+	//seteo objetos
+	for (int i = 0; i < numberSpheres; i++) {
+		powerUps[i].setCube();
+	}
+
+	Sphere sphere;
+	a.push_back(sphere);
+	a[0].setCube();
+
+	//// initialize texture
+	//InitializeTexture(myTex, &name[0], (char*)"C:/Users/ednamo/Desktop/TEC/energy.bmp");
+
+	srand(time(NULL));
+	for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-2) + rand() % 5);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-2) + rand() % 5);
+
+		cout << rp1 << " " << rp2 << " " << rp3 << endl;
+		r[i][0] = rp1;
+		r[i][1] = rp2;
+		r[i][2] = rp3;
+	}
+
+
 	// Enable depth testing (for hidden surface removal)
 	glEnable(GL_DEPTH_TEST);
 
@@ -60,6 +171,7 @@ void customInitialize(void)
 	ring = new Ring();
 	state = MainMenu;
 
+	timeRemaining = 20;
 }
 
 void DrawAxis(void)
@@ -93,6 +205,30 @@ void DrawAxis(void)
 	glEnable(GL_LIGHTING);
 }
 
+void renderText() {
+	glDisable(GL_LIGHTING);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+		glOrtho(-5.0, 5.0, -5.0, 5.0, -5.0, 50.0);
+
+		glMatrixMode(GL_MODELVIEW);
+		glScalef(.001, .001, .001);
+
+		string timeRemainingStr = to_string(timeRemaining);
+		const char* arr = timeRemainingStr.c_str();
+		const char* c;
+
+		glColor3f(1.0, 1.0, 1.0);
+		for (c = arr; *c != '\0'; c++) {
+			glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+		}
+
+		glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_LIGHTING);
+}
+
 void display(void)
 {
 	// Clear the buffer
@@ -111,11 +247,30 @@ void display(void)
 		break;
 	case Play:
 
-			gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
-			//DrawAxis();
-			terrain->Build();
-			plane->Fly();
-			ring->Draw();
+			glPushMatrix();
+			DrawAxis();
+				terrain->Build();
+				glPushMatrix();
+					plane->Fly();
+					glRotatef(-180, 0.0, 1.0, 0.0);
+					glTranslatef(-0.07, 0.1, 0.0);
+					renderText();
+				glPopMatrix();
+
+				//Dibuja esferas
+				glPushMatrix(); {
+					for (int i = 0; i < numberSpheres; i++) {
+						powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
+					}
+				}
+			glPopMatrix();
+
+			for (int i = 0; i < numberSpheres; i++) {//Error 2-4
+				if (powerUps[i].collision(plane->GetPosition(), 0.3)) {
+					changePos(i);
+					break;
+				}
+			}
 		break;
 	case Pause:
 		break;
@@ -124,6 +279,20 @@ void display(void)
 	default:
 		break;
 	}	
+	
+	//if (a.size() > 0) {
+	//	a[0].sphereEnergy(r[0][0], r[0][1], r[0][2]);
+	//}
+
+
+	//if (a.size() > 0) {
+	//	if (a[0].collision(plane->GetPosition(), 0.3)) {
+	//		//a.erase(a.begin());
+	//		nRan();
+	//		cout << "Borrado" << endl;
+	//	}
+	//}
+	//
 
 	glutSwapBuffers();
 }
@@ -157,10 +326,10 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		exit(0);
 		break;
-	case'r':
+	case 'r':
 		plane->Reset();
 		break;
-	case'm':
+	case 'm':
 		plane->ToggleMove();
 		break;
 	case 'q':
@@ -178,6 +347,8 @@ void keyboard(unsigned char key, int x, int y)
 			float* pos = plane->GetPosition();
 			ring->SetRandPosition(pos);
 		}
+	case 't':
+		timeRemaining += 6;
 		break;
 	}
 }
@@ -226,7 +397,9 @@ int main(int argc, char** argv)
 	glutKeyboardFunc(keyboard);
 	glutIdleFunc(display);
 	glutSpecialFunc(processSpecialKeys);
+	glutTimerFunc(1000, PlaneTimer, 0);
 
+	//Timer(0);
 	// Do main loop
 	glutMainLoop();
 

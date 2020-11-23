@@ -42,6 +42,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Ring.h">
+          <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="CG_Tec.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
