@@ -5,6 +5,7 @@
 #include "Plane.h"
 #include "Terrain.h"
 #include "Menu.h"
+#include "Ring.h"
 
 // Game manager
 enum gameState { MainMenu, Play, Pause, GameOver } state;
@@ -12,6 +13,7 @@ enum gameState { MainMenu, Play, Pause, GameOver } state;
 Plane* plane;
 Terrain* terrain;
 Menu* menu;
+Ring* ring;
 
 void customInitialize(void)
 {
@@ -55,7 +57,9 @@ void customInitialize(void)
 	plane = new Plane();
 	terrain = new Terrain();
 	menu = new Menu();
+	ring = new Ring();
 	state = MainMenu;
+
 }
 
 void DrawAxis(void)
@@ -111,6 +115,7 @@ void display(void)
 			//DrawAxis();
 			terrain->Build();
 			plane->Fly();
+			ring->Draw();
 		break;
 	case Pause:
 		break;
@@ -167,6 +172,11 @@ void keyboard(unsigned char key, int x, int y)
 				state = Play;
 			else
 				exit(0);
+		}
+		if (state == Play)
+		{
+			float* pos = plane->GetPosition();
+			ring->SetRandPosition(pos);
 		}
 		break;
 	}

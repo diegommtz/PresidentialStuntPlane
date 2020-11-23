@@ -1,4 +1,12 @@
 #pragma once
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+
 class Ring
 {
 public:
@@ -16,6 +24,16 @@ public:
 	/// thickiness of the ring
 	/// </summary>
 	float thick;
+
+	/// <summary>
+	/// Distance from the plane
+	/// </summary>
+	float planeDistance;
+
+	/// <summary>
+	/// Rotatioon on Y axis
+	/// </summary>
+	float rotY;
 
 	Ring();
 	bool CheckCollision(float planePos[3], float planeRadius);
