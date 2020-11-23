@@ -191,6 +191,7 @@ void DrawAxis(void)
 }
 
 void renderText() {
+	glDisable(GL_LIGHTING);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 		glOrtho(-5.0, 5.0, -5.0, 5.0, -5.0, 50.0);
@@ -210,6 +211,7 @@ void renderText() {
 		glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_LIGHTING);
 }
 
 void display(void)
