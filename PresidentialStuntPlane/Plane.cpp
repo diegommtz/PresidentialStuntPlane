@@ -38,11 +38,11 @@ Plane::Plane() {
 	visRot = 0;
 	tiltTimer = 0;
 
-	char arr[] = "C://Users/crl_s/OneDrive/Escritorio/Beriev_A50/BerievA50.obj"; // SOTO
+	//char arr[] = "C://Users/crl_s/OneDrive/Escritorio/Beriev_A50/BerievA50.obj"; // SOTO
 
 	//char arr[] = "C://Users/ednamo/Desktop/Beriev_A50/BerievA50.obj"; //NAVA
 
-	//char arr[] = "C://Users/diego/source/repos/objects/Beriev_A50/BerievA50.obj"; // DEUS
+	char arr[] = "C://Users/diego/source/repos/objects/Beriev_A50/BerievA50.obj"; // DEUS
 
 	char* file = &arr[0];
 

@@ -4,9 +4,14 @@
 #include <stdlib.h>		// Library used for random method
 #include "Plane.h"
 #include "Terrain.h"
+#include "Menu.h"
+
+// Game manager
+enum gameState { MainMenu, Play, Pause, GameOver } state;
 
 Plane* plane;
 Terrain* terrain;
+Menu* menu;
 
 void customInitialize(void)
 {
@@ -49,6 +54,8 @@ void customInitialize(void)
 
 	plane = new Plane();
 	terrain = new Terrain();
+	menu = new Menu();
+	state = MainMenu;
 }
 
 void DrawAxis(void)
@@ -89,16 +96,29 @@ void display(void)
 
 	glLoadIdentity();
 
-	float* camPosition;
-	camPosition = plane->GetCamPosition();
+	//Get camera's position based on plane
+	float* camPosition = plane->GetCamPosition();
 
-	gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
-	//gluLookAt(plane->pos[0] + 5, plane->pos[1] + 0.3, plane->pos[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
+	switch (state)
+	{
+	case MainMenu:
+			gluLookAt(-10, 0, 0, 0, 0, 0, 0.0, 1.0, 0.0);
+			menu->Draw();
+		break;
+	case Play:
 
-	DrawAxis();
-
-	terrain->Build();
-	plane->Fly();
+			gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
+			//DrawAxis();
+			terrain->Build();
+			plane->Fly();
+		break;
+	case Pause:
+		break;
+	case GameOver:
+		break;
+	default:
+		break;
+	}	
 
 	glutSwapBuffers();
 }
@@ -141,6 +161,14 @@ void keyboard(unsigned char key, int x, int y)
 	case 'q':
 		plane->Debug();
 		break;
+	case ' ':
+		if (state == MainMenu) {
+			if (menu->leftOp)
+				state = Play;
+			else
+				exit(0);
+		}
+		break;
 	}
 }
 
@@ -148,17 +176,21 @@ void processSpecialKeys(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP:
 		plane->Up();
-		glutPostRedisplay();
 		break;
 	case GLUT_KEY_DOWN:
 		plane->Down();
-		glutPostRedisplay();
 		break;
 	case GLUT_KEY_LEFT:
-		plane->Left();
+		if (state == MainMenu)
+			menu->leftOp = true;
+		if (state == Play)
+			plane->Left();
 		break;
 	case GLUT_KEY_RIGHT:
-		plane->Right();
+		if (state == MainMenu)
+			menu->leftOp = false;
+		if (state == Play)
+			plane->Right();
 		break;
 	}
 	glutPostRedisplay();
