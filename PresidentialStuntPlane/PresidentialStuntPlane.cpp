@@ -87,9 +87,8 @@ static void Timer(int value) {
 
 static void PlaneTimer(int value) {
 	
-	if (state != Play) return;
-
-	timeRemaining--;
+	if(state == Play)
+		timeRemaining--;
 	std::cout << "Time Remaining: " << timeRemaining << std::endl;
 	glutTimerFunc(1000, PlaneTimer, 0);
 }
@@ -242,35 +241,37 @@ void display(void)
 	switch (state)
 	{
 	case MainMenu:
-			gluLookAt(-10, 0, 0, 0, 0, 0, 0.0, 1.0, 0.0);
-			menu->Draw();
+		gluLookAt(-10, 0, 0, 0, 0, 0, 0.0, 1.0, 0.0);
+		menu->Draw();
 		break;
 	case Play:
 
-			glPushMatrix();
-			DrawAxis();
-				terrain->Build();
-				glPushMatrix();
-					plane->Fly();
-					glRotatef(-180, 0.0, 1.0, 0.0);
-					glTranslatef(-0.07, 0.1, 0.0);
-					renderText();
-				glPopMatrix();
+		gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
+		
+		DrawAxis();
+		
+		terrain->Build();
+		glPushMatrix();
+			plane->Fly();
+			glRotatef(-180, 0.0, 1.0, 0.0);
+			glTranslatef(-0.07, 0.1, 0.0);
+			renderText();
+		glPopMatrix();
 
-				//Dibuja esferas
-				glPushMatrix(); {
-					for (int i = 0; i < numberSpheres; i++) {
-						powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
-					}
-				}
-			glPopMatrix();
-
-			for (int i = 0; i < numberSpheres; i++) {//Error 2-4
-				if (powerUps[i].collision(plane->GetPosition(), 0.3)) {
-					changePos(i);
-					break;
-				}
+		//Dibuja esferas
+		glPushMatrix(); {
+			for (int i = 0; i < numberSpheres; i++) {
+				powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
 			}
+		}
+		glPopMatrix();
+
+		for (int i = 0; i < numberSpheres; i++) {//Error 2-4
+			if (powerUps[i].collision(plane->GetPosition(), 0.3)) {
+				changePos(i);
+				break;
+			}
+		}
 		break;
 	case Pause:
 		break;
