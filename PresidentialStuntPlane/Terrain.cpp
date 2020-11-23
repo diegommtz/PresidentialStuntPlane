@@ -3,11 +3,11 @@
 Mesh* terrain;
 
 Terrain::Terrain() {
-	char arrTerrain[] = "C://Users/crl_s/OneDrive/Escritorio/TerrainDifferent/terrain.obj"; //SOTO
+	//char arrTerrain[] = "C://Users/crl_s/OneDrive/Escritorio/TerrainDifferent/terrain.obj"; //SOTO
 
 	//char arrTerrain[] = "C://Users/ednamo/Desktop/TerrainDifferent/terrain.obj"; //NAVA
 
-	//char arrTerrain[] = "C://Users/diego/source/repos/objects/TerrainDifferent/terrain.obj"; //DEUS
+	char arrTerrain[] = "C://Users/diego/source/repos/objects/TerrainDifferent/terrain.obj"; //DEUS
 
 	char* terrainFile = &arrTerrain[0];
 

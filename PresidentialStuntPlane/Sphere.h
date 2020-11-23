@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h> //Comment this line if linux
 #include <GL/gl.h>
-#include <glut.h> // Use "glut.h" if local 
+#include <GL/glut.h>
 #include <cmath>
 #include <math.h>
 

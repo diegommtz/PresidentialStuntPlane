@@ -1,6 +1,6 @@
 #include <Windows.h>	// Comment this line if Linux
 #include<GL/gl.h>		
-#include<glut.h>		//"glut.h" if local
+#include <GL/glut.h>
 #include <stdlib.h>		// Library used for random method
 
 #include <stdlib.h>     /* srand, rand */

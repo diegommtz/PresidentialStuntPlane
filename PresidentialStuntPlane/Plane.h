@@ -2,7 +2,7 @@
 #pragma once
 #include <windows.h>
 #include <GL/gl.h>
-#include <glut.h>
+#include <GL/glut.h>
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
