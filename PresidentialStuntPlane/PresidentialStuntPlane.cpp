@@ -5,7 +5,7 @@
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
-
+#include<string.h>
 #include "Plane.h"
 #include<vector>
 #include "Sphere.h"
