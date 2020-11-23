@@ -197,7 +197,7 @@ void Plane::Fly() {
 	}
 
 	// Movable teapot
-	glPushMatrix();
+	// glPushMatrix();
 	glTranslated(pos[0], pos[1], pos[2]);
 
 	//Rotation
@@ -222,7 +222,7 @@ void Plane::Fly() {
 	glRotated(90, 0.0, 1.0, 0.0);
 	myMesh->Draw();
 	//glutSolidTeapot(radio2);
-	glPopMatrix();
+	// glPopMatrix();
 
 	//Update positions
 	for (int i = 0; i < 3; i++) {

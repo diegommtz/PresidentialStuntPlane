@@ -31,6 +31,8 @@ vector<Sphere> a;
 
 Terrain* terrain;
 
+int timeRemaining;
+
 void nRan() {
 	srand(time(NULL));
 	for (int i = 0; i < numberSpheres; i++) {
@@ -75,6 +77,11 @@ static void Timer(int value) {
 	glutTimerFunc(5000, Timer, 0);
 }
 
+static void PlaneTimer(int value) {
+	timeRemaining--;
+	std::cout << "Time Remaining: " << timeRemaining << std::endl;
+	glutTimerFunc(1000, PlaneTimer, 0);
+}
 
 
 void customInitialize(void)
@@ -149,6 +156,7 @@ void customInitialize(void)
 
 	plane = new Plane();
 	terrain = new Terrain();
+	timeRemaining = 20;
 }
 
 void DrawAxis(void)
@@ -182,6 +190,28 @@ void DrawAxis(void)
 	glEnable(GL_LIGHTING);
 }
 
+void renderText() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+		glOrtho(-5.0, 5.0, -5.0, 5.0, -5.0, 50.0);
+
+		glMatrixMode(GL_MODELVIEW);
+		glScalef(.001, .001, .001);
+
+		string timeRemainingStr = to_string(timeRemaining);
+		const char* arr = timeRemainingStr.c_str();
+		const char* c;
+
+		glColor3f(1.0, 1.0, 1.0);
+		for (c = arr; *c != '\0'; c++) {
+			glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+		}
+
+		glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
 void display(void)
 {
 	// Clear the buffer
@@ -199,7 +229,11 @@ void display(void)
 	DrawAxis();
 
 	terrain->Build();
-	plane->Fly();
+	glPushMatrix();
+		plane->Fly();
+		glRotatef(-180, 0.0, 1.0, 0.0);
+		glTranslatef(-0.07, 0.1, 0.0);
+		renderText();
 	glPopMatrix();
 
 	//Dibuja esferas
@@ -274,6 +308,9 @@ void keyboard(unsigned char key, int x, int y)
 	case 'q':
 		plane->Debug();
 		break;
+	case 't':
+		timeRemaining += 6;
+		break;
 	}
 }
 
@@ -317,6 +354,7 @@ int main(int argc, char** argv)
 	glutKeyboardFunc(keyboard);
 	glutIdleFunc(display);
 	glutSpecialFunc(processSpecialKeys);
+	glutTimerFunc(1000, PlaneTimer, 0);
 
 	//Timer(0);
 	// Do main loop
