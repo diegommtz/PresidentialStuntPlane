@@ -145,9 +145,12 @@
   <ItemGroup>
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="PresidentialStuntPlane.cpp" />
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CG_Tec.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
