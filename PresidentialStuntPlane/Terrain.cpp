@@ -22,7 +22,7 @@ void Terrain::Build()
 	terrain->NormalizeMesh();
 	glScalef(40.0, 40.0, 40.0);
 	terrain->Draw();
-	terrain->DrawBoundingBox();
+	//terrain->DrawBoundingBox();
 	glPopMatrix();
 }
 

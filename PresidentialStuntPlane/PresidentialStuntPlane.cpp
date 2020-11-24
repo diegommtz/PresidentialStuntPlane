@@ -319,6 +319,9 @@ void display(void)
 			}
 		}
 
+		if (planePos[1] < -1.3)
+			state = GameOv;
+
 		if (timeRemaining <= 0)
 			state = GameOv;
 

@@ -43,7 +43,7 @@ bool Ring::CheckCollision(float* planePos, float planeRadius)
 
 	float dist = sqrt(pow(xDiff, 2) + pow(yDiff, 2) + pow(zDiff, 2));
 
-	if (dist < radius + .5)
+	if (dist < planeRadius + .5)
 		return true;
 	else
 		return false;
@@ -64,6 +64,8 @@ void Ring::SetRandPosition(float planePos[3], float rotX)
 	float z = yzDist * sin(angleXZ);
 
 	pos[0] = planePos[0] + x;
+	if (planePos[1] < 0)
+		y = abs(y);
 	pos[1] = planePos[1] + y;
 	pos[2] = planePos[2] + z;
 

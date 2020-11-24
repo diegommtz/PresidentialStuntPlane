@@ -112,7 +112,7 @@ void Plane::Left()
 	if (visRot > -45)
 		visRot-=4;
 
-	rotX -= 1;
+	rotX -= 2;
 }
 
 void Plane::Right()
@@ -122,7 +122,7 @@ void Plane::Right()
 	if (visRot < 45)
 		visRot+=4;
 
-	rotX += 1;
+	rotX += 2;
 }
 
 void Plane::Debug() {
