@@ -16,7 +16,7 @@ Plane::Plane() {
 	vel[1] = 0.0;
 	vel[2] = 0.0;
 
-	pvel[0] = 2.0;
+	pvel[0] = 10.0;
 	pvel[1] = 0.0;
 	pvel[2] = 0.0;
 

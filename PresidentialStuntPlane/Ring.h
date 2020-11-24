@@ -36,7 +36,7 @@ public:
 	float rotY;
 
 	Ring();
-	bool CheckCollision(float planePos[3], float planeRadius);
+	bool CheckCollision(float* planePos, float planeRadius);
 	void SetRandPosition(float planePos[3]);
 	void Draw();
 	~Ring();

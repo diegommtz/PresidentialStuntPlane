@@ -1,4 +1,5 @@
 #include "Ring.h"
+#include <iostream>
 #define PI 3.14159265358979
 
 Ring::Ring()
@@ -12,9 +13,22 @@ Ring::Ring()
 	srand(time(NULL));
 }
 
-bool Ring::CheckCollision(float planePos[3], float planeRadius)
+bool Ring::CheckCollision(float* planePos, float planeRadius)
 {	
-	return false;
+	float temp0 = planePos[0];
+	float temp1 = planePos[1];
+	float temp2 = planePos[2];
+
+	float xDiff = planePos[0] - pos[0];
+	float yDiff = planePos[2] - pos[1];
+	float zDiff = planePos[1] - pos[2];
+
+	float dist = sqrt(pow(xDiff, 2) + pow(yDiff, 2) + pow(zDiff, 2));
+
+	if (dist < radius + .5)
+		return true;
+	else
+		return false;
 }
 
 void Ring::SetRandPosition(float planePos[3])
@@ -40,12 +54,12 @@ void Ring::SetRandPosition(float planePos[3])
 void Ring::Draw()
 {
 	glDisable(GL_LIGHTING);
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(1.0, 05, 1.0);
 	glPushMatrix();
 	glTranslated(pos[0], pos[1], pos[2]);
 	glRotated(rotY, 0, 1, 0);
 	// Draw big torus
-	glutWireTorus(thick, radius, 20, 20);
+	glutSolidTorus(thick, radius, 20, 20);
 	glPopMatrix();
 	glEnable(GL_LIGHTING);
 }

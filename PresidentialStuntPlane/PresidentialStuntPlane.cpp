@@ -3,7 +3,6 @@
 #include <GL/glut.h>
 #include <stdlib.h>		// Library used for random method
 
-#include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include<string.h>
 #include<vector>
@@ -237,19 +236,21 @@ void display(void)
 
 	//Get camera's position based on plane
 	float* camPosition = plane->GetCamPosition();
+	float* planePos = plane->GetPosition();
 
 	switch (state)
 	{
 	case MainMenu:
-		gluLookAt(-10, 0, 0, 0, 0, 0, 0.0, 1.0, 0.0);
+		gluLookAt(0, 0, 10, 0, 0, 0, 0.0, 1.0, 0.0);
 		menu->Draw();
 		break;
 	case Play:
 
 		gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
 		
-		//DrawAxis();
+		// DrawAxis();
 		
+		// Draw objects
 		ring->Draw();
 		terrain->Build();
 		glPushMatrix();
@@ -259,10 +260,17 @@ void display(void)
 			renderText();
 		glPopMatrix();
 
+		// Ring Collisions
+		if (ring->CheckCollision(planePos, plane->radio2))
+		{
+			ring->SetRandPosition(planePos);
+			timeRemaining += 20;
+		}
+
 		//Dibuja esferas
 		glPushMatrix(); {
 			for (int i = 0; i < numberSpheres; i++) {
-				powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
+				//powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
 			}
 		}
 		glPopMatrix();

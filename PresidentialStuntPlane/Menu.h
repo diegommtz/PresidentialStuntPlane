@@ -5,6 +5,10 @@
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>     /* srand, rand */
+
+using namespace std;
 
 class Menu
 {
@@ -27,5 +31,6 @@ public:
 
 	Menu();
 	void Draw();
+	void CustomRenderText(string phrase);
 	~Menu();
 };
