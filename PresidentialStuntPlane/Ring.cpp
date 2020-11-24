@@ -13,6 +13,24 @@ Ring::Ring()
 	srand(time(NULL));
 }
 
+void SetMaterial()
+{
+	//Silver
+	GLfloat mat_ambient[] = { 0.19225f, 0.19225f, 0.19225f, 1.0f };
+	GLfloat mat_diffuse[] = { 0.50754f, 0.50754f, 0.50754f, 1.0f };
+	GLfloat mat_specular[] = { 0.508273f, 0.508273f, 0.508273f, 1.0f };
+	float shine = 51.2f;
+	GLfloat emission[] = { 0.45,0.333,0.075,1.0 };
+
+	//glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+
+	// Set material properties 
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialf(GL_FRONT, GL_SHININESS, shine);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);	
+}
+
 bool Ring::CheckCollision(float* planePos, float planeRadius)
 {	
 	float temp0 = planePos[0];
@@ -53,15 +71,14 @@ void Ring::SetRandPosition(float planePos[3])
 
 void Ring::Draw()
 {
-	glDisable(GL_LIGHTING);
-	glColor3f(1.0, 05, 1.0);
+	SetMaterial();
+	glColor3f(1.0, 1.0, 1.0);
 	glPushMatrix();
 	glTranslated(pos[0], pos[1], pos[2]);
 	glRotated(rotY, 0, 1, 0);
 	// Draw big torus
 	glutSolidTorus(thick, radius, 20, 20);
 	glPopMatrix();
-	glEnable(GL_LIGHTING);
 }
 
 Ring::~Ring()

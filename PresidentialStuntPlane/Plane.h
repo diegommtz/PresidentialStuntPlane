@@ -83,6 +83,10 @@ public:
 	/// </summary>
 	float camPos[3];
 
+	/// <summary>
+	/// Time before speed burst runs out
+	/// </summary>
+	int velBurstTimer;
 
 	//DEBUG
 	bool brPoint = false;
@@ -94,7 +98,7 @@ public:
 	void SetCollisionMaterial();
 	float* GetPosition();
 	float* GetCamPosition();
-
+	void VelBurst();
 	void Fly();
 	void Reset();
 	bool Collision(float x, float y, float z, float radio);

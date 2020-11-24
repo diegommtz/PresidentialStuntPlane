@@ -18,9 +18,9 @@ void Terrain::Build()
 {
 	glPushMatrix();
 	// Poner más o menos a la mitad de lo que se está escalando
-	glTranslatef(0.0, 8.0, 0.0);
+	glTranslatef(0.0, 15.0, 0.0);
 	terrain->NormalizeMesh();
-	glScalef(20.0, 20.0, 20.0);
+	glScalef(40.0, 40.0, 40.0);
 	terrain->Draw();
 	terrain->DrawBoundingBox();
 	glPopMatrix();

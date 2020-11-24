@@ -144,6 +144,11 @@ float* Plane::GetCamPosition() {
 	return camPos;
 }
 
+void Plane::VelBurst()
+{
+	velBurstTimer = 60;
+}
+
 void Plane::Fly() {
 	SetNormalMaterial();
 
@@ -160,12 +165,20 @@ void Plane::Fly() {
 	if (move) {
 
 		// Velocity
-		for (int i = 0; i < 3; i++) {
-			vel[i] = pvel[i] + acc[i] * deltaT;
-		}
+		//for (int i = 0; i < 3; i++) {
+		//	vel[i] = pvel[i] + acc[i] * deltaT;
+		//}
 
 		// Get velocity vector
-		float totalVel = sqrt(pow(vel[0], 2) + pow(vel[1], 2) + pow(vel[2], 2));
+		float totalVel = 15;
+		//totalVel = sqrt(pow(vel[0], 2) + pow(vel[1], 2) + pow(vel[2], 2));
+		if (velBurstTimer >= 0)
+		{
+			velBurstTimer--;
+			totalVel = 30;
+		}
+
+		std::cout << totalVel << std::endl;
 
 		// Convert degrees to radians
 		float angleZ = rotZ * PI / 180;
@@ -216,7 +229,7 @@ void Plane::Fly() {
 			visRot += 2.0f;
 	}
 
-	glutWireSphere(radio2, 8, 8);
+	//glutWireSphere(radio2, 8, 8);
 	myMesh->NormalizeMesh();
 	//myMesh->DrawBoundingBox();
 	glRotated(90, 0.0, 1.0, 0.0);

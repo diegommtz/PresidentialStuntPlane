@@ -108,7 +108,7 @@ static void PlaneTimer(int value) {
 		totalTime++;
 	}
 
-	std::cout << "Time Remaining: " << timeRemaining << std::endl;
+	//std::cout << "Time Remaining: " << timeRemaining << std::endl;
 	glutTimerFunc(1000, PlaneTimer, 0);
 }
 
@@ -180,7 +180,7 @@ void customInitialize(void)
 		rp2 = (float)(1 + rand() % (3 - 1));
 		rp3 = (float)((-2) + rand() % 5);
 
-		cout << rp1 << " " << rp2 << " " << rp3 << endl;
+		//cout << rp1 << " " << rp2 << " " << rp3 << endl;
 		r[i][0] = rp1;
 		r[i][1] = rp2;
 		r[i][2] = rp3;
@@ -232,7 +232,7 @@ void DrawAxis(void)
 	glEnable(GL_LIGHTING);
 }
 
-void renderText() {
+void renderText() {	
 	glDisable(GL_LIGHTING);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -245,7 +245,7 @@ void renderText() {
 		const char* arr = timeRemainingStr.c_str();
 		const char* c;
 
-		glColor3f(1.0, 1.0, 1.0);
+		glColor3f(0, 0, 0);
 		for (c = arr; *c != '\0'; c++) {
 			glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
 		}
@@ -312,7 +312,8 @@ void display(void)
 		for (int i = 0; i < numberSpheres; i++) {//Error 2-4
 			if (powerUps[i].collision(plane->GetPosition(), 0.3)) {
 
-				//TODO: Aumentar la velocidad del avión
+				//Aumentar la velocidad del avión
+				plane->VelBurst();
 
 				changePos(i);
 				break;
@@ -388,10 +389,15 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	case ' ':
 		if (state == MainMenu) {
-			if (menu->leftOp)
+			if (menu->leftOp) {
 				state = Play;
-			else
+
+				float* planePos = plane->GetPosition();
+				ring->SetRandPosition(planePos);
+			}
+			else {
 				exit(0);
+			}
 		}
 		if (state == Play)
 		{
