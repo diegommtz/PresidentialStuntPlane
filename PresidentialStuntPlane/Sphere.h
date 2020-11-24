@@ -10,7 +10,7 @@
 #include<iostream>
 using namespace std;
 
-//##########3####PARA LA ESFERA#################
+//##############PARA LA ESFERA#################
 bool relojFlag = false;
 
 int reloj = 0;
@@ -203,7 +203,6 @@ void subdivide(Vertex v0, Vertex v1, Vertex v2, Vertex v3, Vertex n0, Vertex n1,
     if (depth == 0)
     {
         glBegin(GL_QUADS);
-        glPushMatrix(); {
             glScaled(0.2, 0.2, 0.2);
             glTexCoord2f(s[0], t[0]);
             glNormal3f(n0.x, n0.y, n0.z);
@@ -220,8 +219,6 @@ void subdivide(Vertex v0, Vertex v1, Vertex v2, Vertex v3, Vertex n0, Vertex n1,
             glTexCoord2f(s[3], t[3]);
             glNormal3f(n3.x, n3.y, n3.z);
             glVertex3f(v3.x, v3.y, v3.z);
-        }
-        glPopMatrix();
         glEnd();
     }
     else
@@ -521,9 +518,9 @@ void Sphere::sphereEnergy(float rp1, float rp2, float rp3 ) {
     
     int i = 0;
     // Define material properties
-    GLfloat mat_spec[] = { 3000.0, 3000.0, 3000.0, 3000.0 };
-    GLfloat mat_shiny[] = { 100.0 };
-    GLfloat mat_surf[] = { 1.0, 1.0, 0.0, 0.0 };
+    //GLfloat mat_spec[] = { 3000.0, 3000.0, 3000.0, 3000.0 };
+    //GLfloat mat_shiny[] = { 100.0 };
+    //GLfloat mat_surf[] = { 1.0, 1.0, 0.0, 0.0 };
 
     glPushMatrix(); {
         glTranslated(rp1, rp2, rp3);

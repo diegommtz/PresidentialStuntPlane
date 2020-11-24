@@ -13,7 +13,7 @@ Ring::Ring()
 }
 
 bool Ring::CheckCollision(float planePos[3], float planeRadius)
-{
+{	
 	return false;
 }
 
@@ -39,13 +39,15 @@ void Ring::SetRandPosition(float planePos[3])
 
 void Ring::Draw()
 {
+	glDisable(GL_LIGHTING);
 	glColor3f(1.0, 1.0, 1.0);
 	glPushMatrix();
 	glTranslated(pos[0], pos[1], pos[2]);
 	glRotated(rotY, 0, 1, 0);
 	// Draw big torus
-	glutSolidTorus(thick, radius, 20, 20);
+	glutWireTorus(thick, radius, 20, 20);
 	glPopMatrix();
+	glEnable(GL_LIGHTING);
 }
 
 Ring::~Ring()

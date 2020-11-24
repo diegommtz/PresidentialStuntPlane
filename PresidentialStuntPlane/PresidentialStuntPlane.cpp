@@ -248,8 +248,9 @@ void display(void)
 
 		gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
 		
-		DrawAxis();
+		//DrawAxis();
 		
+		ring->Draw();
 		terrain->Build();
 		glPushMatrix();
 			plane->Fly();
@@ -268,10 +269,14 @@ void display(void)
 
 		for (int i = 0; i < numberSpheres; i++) {//Error 2-4
 			if (powerUps[i].collision(plane->GetPosition(), 0.3)) {
+
+				//TODO: Aumentar la velocidad del avión
+
 				changePos(i);
 				break;
 			}
-		}
+		}		
+
 		break;
 	case Pause:
 		break;
@@ -348,6 +353,7 @@ void keyboard(unsigned char key, int x, int y)
 			float* pos = plane->GetPosition();
 			ring->SetRandPosition(pos);
 		}
+		break;
 	case 't':
 		timeRemaining += 6;
 		break;
