@@ -1,6 +1,6 @@
 #include <Windows.h>	// Comment this line if Linux
 #include<GL/gl.h>		
-#include <GL/glut.h>
+#include <glut.h>
 #include <stdlib.h>		// Library used for random method
 
 #include <stdlib.h>     /* srand, rand */
@@ -22,6 +22,20 @@ Plane* plane;
 //#include "TextureSetup.h"
 //static GLuint name[1];
 //RGBpixmap myTex;
+
+void SetEmeraldMaterial(void) {
+	//Emerald
+	GLfloat mat_ambient[] = { 0.0215f, 0.1745f, 0.0215f,1.0f };
+	GLfloat mat_diffuse[] = { 0.07568f, 0.61424f, 0.07568f, 1.0f };
+	GLfloat mat_specular[] = { 0.633f, 0.727811f, 0.633f, 1.0f };
+	GLfloat shine[] = { 0.6 * 128.0f };
+
+	// Set material properties 
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, shine);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+}
 
 //para los randompoints de las esferas
 float rp1;
@@ -128,9 +142,19 @@ void customInitialize(void)
 	glEnable(GL_LIGHT0);
 
 	// Enable lighting
-	//glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHTING);
+
+	srand(time(NULL));
 
 	 //Creo objetos
+	/*for (int i = 0; i < numberSpheres; i++) {
+		rp1 = (float)((-2) + rand() % 5);
+		rp2 = (float)(1 + rand() % (3 - 1));
+		rp3 = (float)((-2) + rand() % 5);
+		Sphere sphere(rp1,rp2,rp3);
+		powerUps.push_back(sphere);
+	}*/
+
 	for (int i = 0; i < numberSpheres; i++) {
 		Sphere sphere;
 		powerUps.push_back(sphere);
@@ -141,10 +165,7 @@ void customInitialize(void)
 		powerUps[i].setCube();
 	}
 
-	Sphere sphere;
-	a.push_back(sphere);
-	a[0].setCube();
-
+	
 	//// initialize texture
 	//InitializeTexture(myTex, &name[0], (char*)"C:/Users/ednamo/Desktop/TEC/energy.bmp");
 
@@ -259,10 +280,14 @@ void display(void)
 			renderText();
 		glPopMatrix();
 
+		
 		//Dibuja esferas
+		//SetEmeraldMaterial();
 		glPushMatrix(); {
 			for (int i = 0; i < numberSpheres; i++) {
-				powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
+				
+				powerUps[i].draw(r[i][0], r[i][1], r[i][2]);
+				//powerUps[i].sphereEnergy(r[i][0], r[i][1], r[i][2]);
 			}
 		}
 		glPopMatrix();

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h> //Comment this line if linux
 #include <GL/gl.h>
-#include <GL/glut.h>
+#include <glut.h> // Use "glut.h" if local 
 #include <cmath>
 #include <math.h>
 
@@ -10,10 +10,157 @@
 #include<iostream>
 using namespace std;
 
-//##############PARA LA ESFERA#################
+//##########3####PARA LA ESFERA#################
 bool relojFlag = false;
 
 int reloj = 0;
+
+void SetBrassMaterial();
+
+void SetGoldMaterial();
+
+//---------------OTRO MÉTODO PARA CREAR UNA ESFERA-----------------
+GLuint texture;
+double angle = 0;
+typedef struct
+{
+    int X;
+    int Y;
+    int Z;
+    double U;
+    double V;
+}VERTICES;
+
+const double PI = 3.1415926535897;
+const int space = 10;
+const int VertexCount = (90 / space) * (360 / space) * 4;
+VERTICES VERTEX[VertexCount];
+GLuint LoadTextureRAW(const char* filename);
+
+void DisplaySphere(double R, GLuint texture)
+{
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    int b;
+    glScalef(0.0125 * R, 0.0125 * R, 0.0125 * R);
+    //glRotatef (90, 1, 0, 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBegin(GL_TRIANGLE_STRIP);
+    for (b = 0; b < VertexCount; b++)
+    {
+        glTexCoord2f(VERTEX[b].U, VERTEX[b].V);
+        glVertex3f(VERTEX[b].X, VERTEX[b].Y, -VERTEX[b].Z);
+    }
+
+
+
+    for (b = 0; b < VertexCount; b++)
+    {
+
+        glTexCoord2f(VERTEX[b].U, -VERTEX[b].V);
+
+        glVertex3f(VERTEX[b].X, VERTEX[b].Y, VERTEX[b].Z);
+
+    }
+
+    glEnd();
+}
+void CreateSphere(double R, double H, double K, double Z) {
+    int n;
+    double a;
+    double b;
+    n = 0;
+    for (b = 0; b <= 90 - space; b += space) {
+
+        for (a = 0; a <= 360 - space; a += space)
+        {
+            VERTEX[n].X = R * sin((a) / 180 * PI) * sin((b) / 180 * PI) - H;
+            VERTEX[n].Y = R * cos((a) / 180 * PI) * sin((b) / 180 * PI) + K;
+            VERTEX[n].Z = R * cos((b) / 180 * PI) - Z;
+            VERTEX[n].V = (2 * b) / 360;
+            VERTEX[n].U = (a) / 360;
+
+            n++;
+            VERTEX[n].X = R * sin((a) / 180 * PI) * sin((b + space) / 180 * PI) - H;
+            VERTEX[n].Y = R * cos((a) / 180 * PI) * sin((b + space) / 180 * PI) + K;
+            VERTEX[n].Z = R * cos((b + space) / 180 * PI) - Z;
+            VERTEX[n].V = (2 * (b + space)) / 360;
+            VERTEX[n].U = (a) / 360;
+            n++;
+            VERTEX[n].X = R * sin((a + space) / 180 * PI) * sin((b) / 180 * PI) - H;
+            VERTEX[n].Y = R * cos((a + space) / 180 * PI) * sin((b) / 180 * PI) + K;
+            VERTEX[n].Z = R * cos((b) / 180 * PI) - Z;
+            VERTEX[n].V = (2 * b) / 360;
+            VERTEX[n].U = (a + space) / 360;
+            n++;
+            VERTEX[n].X = R * sin((a + space) / 180 * PI) * sin((b + space) / 180 * PI) - H;
+            VERTEX[n].Y = R * cos((a + space) / 180 * PI) * sin((b + space) / 180 * PI) + K;
+            VERTEX[n].Z = R * cos((b + space) / 180 * PI) - Z;
+            VERTEX[n].V = (2 * (b + space)) / 360;
+            VERTEX[n].U = (a + space) / 360;
+            n++;
+        }
+
+    }
+}
+
+GLuint LoadTextureRAW(const char* filename)
+{
+
+    GLuint texture;
+
+    int width, height;
+
+    unsigned char* data;
+
+    FILE* file;
+
+    file = fopen(filename, "rb");
+
+    if (file == NULL) return 0;
+
+    width = 1024;
+
+    height = 512;
+
+    data = (unsigned char*)malloc(width * height * 3);
+
+
+    //int size = fseek(file,);
+    fread(data, width * height * 3, 1, file);
+
+    fclose(file);
+
+    for (int i = 0; i < width * height; ++i)
+    {
+        int index = i * 3;
+        unsigned char B, R;
+        B = data[index];
+        R = data[index + 2];
+        //B = data[index];
+        data[index] = R;
+        data[index + 2] = B;
+
+    }
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+    free(data);
+
+    return texture;
+}
+
+
+//--------------------------------------------------------------------------------
 
 struct Vertex
 {
@@ -59,20 +206,28 @@ private:
 public:
     float myPos[3];
     Sphere();
+        Sphere(float,float,float);
     ~Sphere();
     void setCube();
+
     void sphereEnergy(float,float,float);
+    void draw(float, float, float);
 
     bool collision(float*,float);
 
     float* getPos();
 
-    void SetNormalMaterial(void);
+    //void SetBrassMaterial(void);
     void SetCollisionMaterial(void);
 
 };
 
 Sphere::Sphere() {
+
+    texture = LoadTextureRAW("C://Users/ednamo/Desktop/TEC/kal.bmp");
+
+    CreateSphere(30, 0, 0, 0);
+
     radio = sqrt(0.25 + 0.25 + 0.25);
     //radio = sqrt(0.2);
     // Texture coords
@@ -92,6 +247,33 @@ Sphere::Sphere() {
     srand(time(NULL));
 
 }
+
+Sphere::Sphere(float a, float b, float c) {
+
+    texture = LoadTextureRAW("C://Users/ednamo/Desktop/TEC/kal.bmp");
+
+    CreateSphere(30, a, b, c);
+
+    radio = sqrt(0.25 + 0.25 + 0.25);
+    //radio = sqrt(0.2);
+    // Texture coords
+   /* GLfloat s[4], t[4];*/
+
+    s[0] = 0.0f;
+    t[0] = 0.0f;
+
+    s[1] = 1.0f;
+    t[1] = 0.0f;
+
+    s[2] = 1.0f;
+    t[2] = 1.0f;
+
+    s[3] = 0.0f;
+    t[3] = 1.0f;
+    srand(time(NULL));
+
+}
+
 Sphere::~Sphere() {}
 
 void Sphere::setCube()
@@ -183,19 +365,6 @@ void Sphere::setCube()
         faces[5].d = 4;
 
 }
-//
-//void Timer(int value) {
-//    //respawnFlag = !respawnFlag;
-//
-//    /* initialize random seed: */
-//    srand(time(NULL));
-//    rp1 = (float)(1 + rand() % 100) / 10;         // rp1 in the range 0.0 to 5.0
-//    rp2 = (float)(1 + rand() % 100) / 10;         // rp2 in the range 0.0 to 5.0
-//    rp3 = (float)(1 + rand() % 100) / 10;         // rp3 in the range 0.0 to 5.0
-//    glutPostRedisplay();
-//    // 100 milliseconds
-//    glutTimerFunc(7000, Timer, 0);
-//}
 
 
 void subdivide(Vertex v0, Vertex v1, Vertex v2, Vertex v3, Vertex n0, Vertex n1, Vertex n2, Vertex n3, GLfloat* s, GLfloat* t, int depth)
@@ -203,22 +372,22 @@ void subdivide(Vertex v0, Vertex v1, Vertex v2, Vertex v3, Vertex n0, Vertex n1,
     if (depth == 0)
     {
         glBegin(GL_QUADS);
-            glScaled(0.2, 0.2, 0.2);
-            glTexCoord2f(s[0], t[0]);
-            glNormal3f(n0.x, n0.y, n0.z);
-            glVertex3f(v0.x, v0.y, v0.z);
+        glScaled(0.2, 0.2, 0.2);
+        glTexCoord2f(s[0], t[0]);
+        glNormal3f(n0.x, n0.y, n0.z);
+        glVertex3f(v0.x, v0.y, v0.z);
 
-            glTexCoord2f(s[1], t[1]);
-            glNormal3f(n1.x, n1.y, n1.z);
-            glVertex3f(v1.x, v1.y, v1.z);
+        glTexCoord2f(s[1], t[1]);
+        glNormal3f(n1.x, n1.y, n1.z);
+        glVertex3f(v1.x, v1.y, v1.z);
 
-            glTexCoord2f(s[2], t[2]);
-            glNormal3f(n2.x, n2.y, n2.z);
-            glVertex3f(v2.x, v2.y, v2.z);
+        glTexCoord2f(s[2], t[2]);
+        glNormal3f(n2.x, n2.y, n2.z);
+        glVertex3f(v2.x, v2.y, v2.z);
 
-            glTexCoord2f(s[3], t[3]);
-            glNormal3f(n3.x, n3.y, n3.z);
-            glVertex3f(v3.x, v3.y, v3.z);
+        glTexCoord2f(s[3], t[3]);
+        glNormal3f(n3.x, n3.y, n3.z);
+        glVertex3f(v3.x, v3.y, v3.z);
         glEnd();
     }
     else
@@ -485,6 +654,7 @@ void subdivide(Vertex v0, Vertex v1, Vertex v2, Vertex v3, Vertex n0, Vertex n1,
 
 }
 
+
 void Sphere::sphereEnergy(float rp1, float rp2, float rp3 ) {
 
     myPos[0] = rp1;
@@ -517,7 +687,7 @@ void Sphere::sphereEnergy(float rp1, float rp2, float rp3 ) {
     //reloj++;
     
     int i = 0;
-    // Define material properties
+    //// Define material properties
     //GLfloat mat_spec[] = { 3000.0, 3000.0, 3000.0, 3000.0 };
     //GLfloat mat_shiny[] = { 100.0 };
     //GLfloat mat_surf[] = { 1.0, 1.0, 0.0, 0.0 };
@@ -543,6 +713,43 @@ void Sphere::sphereEnergy(float rp1, float rp2, float rp3 ) {
 
 }
 
+void Sphere::draw(float rp1, float rp2, float rp3){
+
+    myPos[0] = rp1;
+    myPos[1] = rp2;
+    myPos[2] = rp3;
+
+    //glTranslated(rp1, rp2, rp3);
+    ////glTranslated(rp1, rp2, rp3);
+    //glScaled(0.2, 0.2, 0.2);
+    //DisplaySphere(5, texture);
+
+    
+    
+    //SIN CREAR LA ESFERA
+    ////Emerald
+    //GLfloat mat_ambient[] = { 0.0215f, 0.1745f, 0.0215f,1.0f };
+    //GLfloat mat_diffuse[] = { 0.07568f, 0.61424f, 0.07568f, 1.0f };
+    //GLfloat mat_specular[] = { 0.633f, 0.727811f, 0.633f, 1.0f };
+    //GLfloat shine[] = { 0.6 * 128.0f };
+
+    //// Set material properties 
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    //glMaterialfv(GL_FRONT, GL_SHININESS, shine);
+    //glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+
+    SetGoldMaterial();
+    //glColor3f(0.0, 1.0, 0.0);
+    glPushMatrix();
+    glTranslated(rp1, rp2, rp3);
+    // Draw big torus
+    //glScaled(0.2, 0.2, 0.2);
+    glutSolidSphere(0.2,64,64);
+    glPopMatrix();
+    //glEnable(GL_LIGHTING);
+
+}
 
 float* Sphere::getPos() {
 
@@ -561,20 +768,52 @@ bool Sphere::collision(float* otherPos,float otherRadio) {
 }
 
 
-//void Sphere::SetNormalMaterial(void) {
-//    // Emerald
-//    GLfloat mat_spec[] = { 0.633, 0.727811, 0.633, 1.0 };
-//    GLfloat mat_shiny[] = { 0.6 };
-//    GLfloat mat_amb[] = { 0.0215, 0.1745, 0.0215, 1.0 };
-//    GLfloat mat_dif[] = { 0.07568, 0.61424, 0.07568, 1.0 };
+void SetBrassMaterial() {
+    //Brass
+    GLfloat mat_ambient[] = { 0.329412f, 0.223529f, 0.027451f,1.0f };
+    GLfloat mat_diffuse[] = { 0.780392f, 0.568627f, 0.113725f, 1.0f };
+    GLfloat mat_specular[] = { 0.992157f, 0.941176f, 0.807843f, 1.0f };
+    GLfloat shine[] = { 27.8974f };
+
+    // Set material properties 
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, shine);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+}
+
+//void SetEmeraldMaterial() {
+//    //Brass
+//    GLfloat mat_ambient[] = { 0.0215f, 0.1745f, 0.0215f,1.0f };
+//    GLfloat mat_diffuse[] = { 0.07568f, 0.61424f, 0.07568f, 1.0f };
+//    GLfloat mat_specular[] = { 0.633f, 0.727811f, 0.633f, 1.0f };
+//    GLfloat shine[] = { 0.6*128.0f };
 //
-//    // SET material properties
-//    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_spec);
-//    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shiny);
-//    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
-//    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
+//    // Set material properties 
+//    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+//    glMaterialfv(GL_FRONT, GL_SHININESS, shine);
+//    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+//    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
 //}
-//
+
+void SetGoldMaterial() {
+    //Gold
+    GLfloat mat_ambient[] = { 0.24725f, 0.1995f, 0.0745f,1.0f };
+    GLfloat mat_diffuse[] = { 0.75164f, 0.60648f, 0.22648f, 1.0f };
+    GLfloat mat_specular[] = { 0.628281f, 0.555802f, 0.366065f, 1.0f };
+    GLfloat shine[] = { 0.4*128.0f };
+    GLfloat emission[] = { 0.45,0.333,0.075,1.0 };
+    
+    glMaterialfv(GL_FRONT, GL_EMISSION, emission);
+
+    // Set material properties 
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, shine);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+}
+
+
 //void Sphere::SetCollisionMaterial(void) {
 //    // RED
 //    GLfloat mat_spec[] = { 0.393548, 271906, 0.166721, 1.0 };
