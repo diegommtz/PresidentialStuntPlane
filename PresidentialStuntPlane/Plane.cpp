@@ -16,7 +16,7 @@ Plane::Plane() {
 	vel[1] = 0.0;
 	vel[2] = 0.0;
 
-	pvel[0] = 10.0;
+	pvel[0] = 15.0;
 	pvel[1] = 0.0;
 	pvel[2] = 0.0;
 
@@ -96,33 +96,33 @@ void Plane::ToggleMove()
 void Plane::Up()
 {
 	if (rotZ < 30)
-		rotZ+=2;
+		rotZ+=4;
 }
 
 void Plane::Down()
 {
 	if (rotZ > -30)
-		rotZ-=1;
+		rotZ-=4;
 }
 
 void Plane::Left()
 {
-	tiltTimer = 100;
+	tiltTimer = 10;
 
 	if (visRot > -45)
-		visRot-=1;
+		visRot-=4;
 
-	rotX -= 2;
+	rotX -= 1;
 }
 
 void Plane::Right()
 {
-	tiltTimer = 100;
+	tiltTimer = 10;
 
 	if (visRot < 45)
-		visRot+=2;
+		visRot+=4;
 
-	rotX += 2;
+	rotX += 1;
 }
 
 void Plane::Debug() {
@@ -210,10 +210,10 @@ void Plane::Fly() {
 		tiltTimer--;
 	}
 	else {
-		if (visRot > 0)
-			visRot -= 0.1f;
-		else if (visRot < 0)
-			visRot += 0.1f;
+		if (visRot > 1)
+			visRot -= 2.0f;
+		else if (visRot < -1)
+			visRot += 2.0f;
 	}
 
 	glutWireSphere(radio2, 8, 8);

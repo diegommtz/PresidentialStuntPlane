@@ -19,9 +19,9 @@ bool Ring::CheckCollision(float* planePos, float planeRadius)
 	float temp1 = planePos[1];
 	float temp2 = planePos[2];
 
-	float xDiff = planePos[0] - pos[0];
-	float yDiff = planePos[2] - pos[1];
-	float zDiff = planePos[1] - pos[2];
+	float xDiff = pos[0] - planePos[0];
+	float yDiff = pos[1] - planePos[1];
+	float zDiff = pos[2] - planePos[2];
 
 	float dist = sqrt(pow(xDiff, 2) + pow(yDiff, 2) + pow(zDiff, 2));
 
