@@ -11,9 +11,10 @@
 #include "Menu.h"
 #include "Ring.h"
 #include "Sphere.h"
+#include "GameOver.h"
 
 // Game manager
-enum gameState { MainMenu, Play, Pause, GameOver } state;
+enum gameState { MainMenu, Play, Pause, GameOv } state;
 
 Plane* plane;
 
@@ -51,8 +52,10 @@ vector<Sphere> a;
 Terrain* terrain;
 Menu* menu;
 Ring* ring;
+GameOver* gameOver;
 
 int timeRemaining;
+int totalTime;
 
 void nRan() {
 	srand(time(NULL));
@@ -100,8 +103,11 @@ static void Timer(int value) {
 
 static void PlaneTimer(int value) {
 	
-	if(state == Play)
+	if (state == Play) {
 		timeRemaining--;
+		totalTime++;
+	}
+
 	std::cout << "Time Remaining: " << timeRemaining << std::endl;
 	glutTimerFunc(1000, PlaneTimer, 0);
 }
@@ -188,9 +194,11 @@ void customInitialize(void)
 	terrain = new Terrain();
 	menu = new Menu();
 	ring = new Ring();
+	gameOver = new GameOver();
 	state = MainMenu;
 
 	timeRemaining = 20;
+	totalTime = 0;
 }
 
 void DrawAxis(void)
@@ -259,6 +267,9 @@ void display(void)
 	float* camPosition = plane->GetCamPosition();
 	float* planePos = plane->GetPosition();
 
+	if(state != Play)
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+
 	switch (state)
 	{
 	case MainMenu:
@@ -267,9 +278,9 @@ void display(void)
 		break;
 	case Play:
 
+		glClearColor(.2, .85, .9, 1.0);
+
 		gluLookAt(camPosition[0], camPosition[1], camPosition[2], plane->pos[0], plane->pos[1], plane->pos[2], 0.0, 1.0, 0.0);
-		
-		// DrawAxis();
 		
 		// Draw objects
 		ring->Draw();
@@ -306,12 +317,15 @@ void display(void)
 				changePos(i);
 				break;
 			}
-		}		
+		}
+
+		if (timeRemaining <= 0)
+			state = GameOv;
 
 		break;
-	case Pause:
-		break;
-	case GameOver:
+	case GameOv:
+		gluLookAt(0, 0, 10, 0, 0, 0, 0.0, 1.0, 0.0);
+		gameOver->Draw(totalTime);
 		break;
 	default:
 		break;
@@ -383,6 +397,9 @@ void keyboard(unsigned char key, int x, int y)
 		{
 			float* pos = plane->GetPosition();
 			ring->SetRandPosition(pos);
+		}
+		if (state == GameOv) {			
+				exit(0);
 		}
 		break;
 	case 't':

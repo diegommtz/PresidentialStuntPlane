@@ -30,6 +30,9 @@
     <ClCompile Include="Ring.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="GameOver.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Plane.h">
@@ -42,9 +45,12 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Ring.h">
-          <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="CG_Tec.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOver.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
