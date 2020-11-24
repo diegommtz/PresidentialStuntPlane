@@ -7,7 +7,7 @@ Ring::Ring()
 	radius = .5;
 	thick = .1;
 
-	planeDistance = 3;
+	planeDistance = 3.2;
 
 	// Initialize random seed
 	srand(time(NULL));
@@ -49,12 +49,12 @@ bool Ring::CheckCollision(float* planePos, float planeRadius)
 		return false;
 }
 
-void Ring::SetRandPosition(float planePos[3])
+void Ring::SetRandPosition(float planePos[3], float rotX)
 {
 	rotY = rand() % 180;
 
-	float angleXY = (rand() % 181) * PI / 180;
-	float angleXZ = (rand() % 181) * PI / 180;
+	float angleXY = (rand() % 180) * PI / 180;
+	float angleXZ = ((rand() % 180) + rotX - 90) * PI / 180;
 
 	float x = planeDistance * sin(angleXY);
 

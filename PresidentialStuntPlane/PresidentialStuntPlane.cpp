@@ -295,7 +295,7 @@ void display(void)
 		// Ring Collisions
 		if (ring->CheckCollision(planePos, plane->radio2))
 		{
-			ring->SetRandPosition(planePos);
+			ring->SetRandPosition(planePos, plane->rotX);
 			timeRemaining += 20;
 		}
 		
@@ -316,7 +316,6 @@ void display(void)
 				plane->VelBurst();
 
 				changePos(i);
-				break;
 			}
 		}
 
@@ -393,7 +392,11 @@ void keyboard(unsigned char key, int x, int y)
 				state = Play;
 
 				float* planePos = plane->GetPosition();
-				ring->SetRandPosition(planePos);
+				ring->SetRandPosition(planePos, plane->rotX);
+
+				for (int i = 0; i < numberSpheres; i++) {//Error 2-4
+					changePos(i);
+				}
 			}
 			else {
 				exit(0);
@@ -401,8 +404,8 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		if (state == Play)
 		{
-			float* pos = plane->GetPosition();
-			ring->SetRandPosition(pos);
+			float* planePos = plane->GetPosition();
+			ring->SetRandPosition(planePos, plane->rotX);
 		}
 		if (state == GameOv) {			
 				exit(0);
